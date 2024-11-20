@@ -1,0 +1,362 @@
+---
+title: データフレームの操作
+teaching: 20
+exercises: 10
+source: Rmd
+---
+
+::::::::::::::::::::::::::::::::::::::: objectives
+
+- 行や列を追加または削除する。
+- 2 つのデータフレームを結合する。
+- データフレームのサイズ、列のクラス、名前、最初の数行などの基本的なプロパティを表示する。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: questions
+
+- データフレームをどのように操作できますか？
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+```{r, include=FALSE}
+```
+
+これまでに、R の基本的なデータ型とデータ構造について学びました。以降の作業は、それらのツールを操作することに集約されます。最も頻繁に登場するのは、CSV ファイルから情報を読み込んで作成するデータフレームです。このレッスンでは、データフレームの操作についてさらに学びます。 しかし大抵の場合、主役はデータフレーム（CSVファイルから情報を読み込み作成した表）です。 このレッスンでは、データフレームを使ってどう作業していくかについて更に学んでいきましょう。
+
+## データフレームに列や行を追加する
+
+データ型や構造が合理的であることを確認したら、データの探索を開始しましょう。最初の数行を確認します： データフレームの列はベクトルであるため、列全体でデータ型が一貫しています。そのため、新しい列を追加したい場合は、まず新しいベクトルを作成します：
+
+```{r, echo=FALSE}
+cats <- read.csv("data/feline-data.csv")
+```
+
+```{r}
+age <- c(2, 3, 5)
+cats
+```
+
+これを列として追加するには、次のようにします：
+
+```{r}
+cbind(cats, age)
+```
+
+ただし、データフレームの行数と異なる要素数を持つベクトルを追加しようとすると失敗します：
+
+```{r, error=TRUE}
+age <- c(2, 3, 5, 12)
+cbind(cats, age)
+
+age <- c(2, 3)
+cbind(cats, age)
+```
+
+Why didn't this work? なぜ失敗するのでしょうか？R は、新しい列の各行に 1 つの要素が必要だと考えています：
+
+```{r}
+nrow(cats)
+length(age)
+```
+
+したがって、`nrow(cats)` と `length(age)` が等しい必要があります。新しいデータフレームを作成して、`cats` に上書きしてみましょう。 Let's overwrite the content of cats with our new data frame.
+
+```{r}
+age <- c(2, 3, 5)
+cats <- cbind(cats, age)
+```
+
+Now how about adding rows? 次に、行を追加してみましょう。データフレームの行はリストであることを既に学びました：
+
+```{r}
+newRow <- list("tortoiseshell", 3.3, TRUE, 9)
+cats <- rbind(cats, newRow)
+```
+
+新しい行が正しく追加されたことを確認します。
+
+```{r}
+cats
+```
+
+## 行を削除する
+
+データフレームに行や列を追加する方法を学びました。次に、行を削除する方法を見てみましょう。
+
+```{r}
+cats
+```
+
+最後の行を削除したデータフレームを取得するには：
+
+```{r}
+cats[-4, ]
+```
+
+コンマの後に何も指定しないことで、4 行目全体を削除することを示します。
+
+複数の行を削除することもできます。たとえば、次のようにベクトル内に行番号を指定します：`cats[c(-3,-4), ]`
+
+## 列を削除する
+
+データフレームの列を削除することもできます。「age」列を削除する場合、変数番号またはインデックスを使用する方法があります。 What if we want to remove the column "age". We can remove it in two ways, by variable number or by index.
+
+```{r}
+cats[,-4]
+```
+
+コンマの前に何も指定しないことで、すべての行を保持することを示します。
+
+または、要素番号の名前を使って列を削除することもできます： または、インデックス名と `%in%` 演算子を使用して列を削除することもできます。`%in%` 演算子は、左側の引数（ここでは `cats` の名前）の各要素について「この要素は右側の引数に含まれますか？」と尋ねます。
+
+```{r}
+drop <- names(cats) %in% c("age")
+cats[,!drop]
+```
+
+We will cover subsetting with logical operators like `%in%` in more detail in the next episode. 論理演算子（`%in%` など）による部分集合化については、次のエピソードで詳しく説明します。詳細は [論理演算を使用した部分集合化](06-data-subsetting.Rmd) を参照してください。
+
+## データフレームの結合
+
+データフレームにデータを追加する際に覚えておくべき重要な点は、_列はベクトル、行はリスト_であることです。2 つのデータフレームを `rbind` を使用して結合することもできます：
+
+```{r}
+cats <- rbind(cats, cats)
+cats
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ 1
+
+次の構文を使用して、新しいデータフレームを R 内で作成できます：
+
+```{r}
+df <- data.frame(id = c("a", "b", "c"),
+                 x = 1:3,
+                 y = c(TRUE, TRUE, FALSE))
+```
+
+以下の情報を持つデータフレームを作成してください：
+
+- 名
+- 姓
+- ラッキーナンバー
+
+Then use `rbind` to add an entry for the people sitting beside you.
+次に、`rbind` を使用して隣の人のエントリを追加します。最後に、`cbind` を使用して「コーヒーブレイクの時間ですか？」という質問への各人の回答を含む列を追加してください。
+
+:::::::::::::::  solution
+
+## チャレンジ 1 の解答
+
+```{r}
+df <- data.frame(first = c("Grace"),
+                 last = c("Hopper"),
+                 lucky_number = c(0))
+df <- rbind(df, list("Marie", "Curie", 238) )
+df <- cbind(df, coffeetime = c(TRUE, TRUE))
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## 実用的な例
+
+これまで、猫データを使ってデータフレーム操作の基本を学びました。次に、これらのスキルを使用して、より現実的なデータセットを扱います。以前ダウンロードした `gapminder` データセットを読み込んでみましょう： `gapminder` の構造を調べる別の方法として、`summary` 関数を使用します。この関数は R のさまざまなオブジェクトで使用できます。データフレームの場合、`summary` は各列の数値的、表形式、または記述的な概要を提供します。数値または整数型の列は記述統計（四分位数や平均値）で、文字列型の列はその長さ、クラス、モードで説明されます。
+
+```{r}
+gapminder <- read.csv("data/gapminder_data.csv")
+```
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## その他のヒント
+
+- Another type of file you might encounter are tab-separated value files (.tsv). タブ区切り値ファイル（.tsv）を扱う場合は、区切り文字として `"\\t"` を指定するか、`read.delim()` を使用します。
+
+- ここではネストされた関数（関数を別の関数の引数として渡す）を使用する一例を示します。この考え方は新しいように思えるかもしれませんが、既に使用しています。\
+  例えば、`my_dataframe[rows, cols]` は指定された行と列のデータフレームを表示します。データフレームの最後の行を取得するにはどうしますか？R にはそのための関数があります。また、（擬似ランダムな）サンプルを取得するにはどうすればよいでしょうか？
+  ファイルをインターネットから直接ダウンロードしてコンピュータの指定したローカルフォルダに保存するには、`download.file` 関数を使用できます。保存されたファイルを `read.csv` 関数で読み込む例：
+
+```{r, eval=FALSE, echo=TRUE}
+download.file("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/main/episodes/data/gapminder_data.csv", destfile = "data/gapminder_data.csv")
+gapminder <- read.csv("data/gapminder_data.csv")
+```
+
+- また、ファイルパスの代わりに Web アドレスを `read.csv` に指定して、ファイルを直接 R に読み込むこともできます。この場合、ローカルにファイルを保存する必要はありません。例： One should note that in doing this no local copy of the csv file is first saved onto your computer. 例えば：
+
+```{r, eval=FALSE, echo=TRUE}
+gapminder <- read.csv("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/main/episodes/data/gapminder_data.csv")
+```
+
+- [readxl パッケージ](https://cran.r-project.org/package=readxl) を使用すると、Excel スプレッドシートをプレーンテキストに変換せずに直接読み込むことができます。
+
+- The argument "stringsAsFactors" can be useful to tell R how to read strings either as factors or as character strings. In R versions after 4.0, all strings are read-in as characters by default, but in earlier versions of R, strings are read-in as factors by default. For more information, see the call-out in [the previous episode](https://swcarpentry.github.io/r-novice-gapminder/04-data-structures-part1.html#check-your-data-for-factors).
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+`gapminder` データセットを調べてみましょう。最初に行うべきことは、`str` を使用してデータの構造を確認することです：
+
+```{r}
+str(gapminder)
+```
+
+An additional method for examining the structure of gapminder is to use the `summary` function. This function can be used on various objects in R. For data frames, `summary` yields a numeric, tabular, or descriptive summary of each column. Numeric or integer columns are described by the descriptive statistics (quartiles and mean), and character columns by its length, class, and mode.
+
+```{r}
+summary(gapminder)
+```
+
+`str` や `summary` 関数と合わせて、`typeof` 関数を使ってデータフレームの個々の列を調べることもできます：
+
+```{r}
+typeof(gapminder$year)
+typeof(gapminder$country)
+str(gapminder$country)
+```
+
+データフレームの次元に関する情報も調べることができます。\
+`str(gapminder)` の出力によると、`gapminder` には 6 つの変数の 1704 個の観測値があります。このことを覚えた上で、次のコードが何を返すか考えてみてください：
+
+```{r}
+length(gapminder)
+```
+
+データフレームの長さが行数（1704）であると考えるのが妥当ですが、実際にはそうではありません。データフレームは_ベクトルや因子のリスト_で構成されていることを思い出してください：
+
+```{r}
+typeof(gapminder)
+```
+
+`length` が 6 を返した理由は、`gapminder` が 6 列のリストで構築されているためです。データセットの行数と列数を取得するには次のようにします： データセットで、行と列の数を知るためには、こうしてみましょう：
+
+```{r}
+nrow(gapminder)
+ncol(gapminder)
+```
+
+あるいは、両方を一度に取得するには：
+
+```{r}
+dim(gapminder)
+```
+
+すべての列のタイトルを調べることもできます。後でアクセスする際に便利です：
+
+```{r}
+colnames(gapminder)
+```
+
+ここで、R が報告する構造が自分の直感や予想と一致しているかどうかを確認することが重要です。各列のデータ型が妥当かどうかを確認してください。そうでない場合は、これまで学んだ R のデータ解釈の仕組みや、一貫性の重要性に基づいて問題を解決する必要があります。 それぞれの列の基本的なデータ型は、思った通りのデータ型になってますか？もしなっていないのなら、今後、予想外の事態を引き起こさないように、 今の時点で、問題を解決しておく必要があります。そのためには、これまでに学んだ、Rがどのようにデータを解釈するか、 そしてデータを記録する際の 厳格な整合性 の重要性といった知識を活かしましょう。
+
+データ型と構造に満足することができたら、データを詳しく見始めることができます。 最初のいくつかの行を見てみましょう：
+
+```{r}
+head(gapminder)
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ 2
+
+データの最後の数行や中間のいくつかの行も確認するのが良い習慣です。これをどのように行いますか？ How would you do this?
+
+特に中間の行を探すのは難しくありませんが、ランダムな行をいくつか取得することもできます。これをどのようにコード化しますか？ How would you code this?
+
+:::::::::::::::  solution
+
+## チャレンジ 2 の解答
+
+最後の数行を確認するには、R に既にある関数を使用すれば簡単です：
+
+```r
+tail(gapminder)
+tail(gapminder, n = 15)
+```
+
+What about a few arbitrary rows just in case something is odd in the middle?
+
+## ヒント: いくつかの方法で達成できます
+
+The solution here presents one form of using nested functions, i.e. a function passed as an argument to another function. This might sound like a new concept, but you are already using it!
+Remember my\_dataframe[rows, cols] will print to screen your data frame with the number of rows and columns you asked for (although you might have asked for a range or named columns for example). では、途中の任意の行を確認するにはどうすればよいでしょうか？ R has a function for this. What about getting a (pseudorandom) sample? R also has a function for this.
+
+```r
+gapminder[sample(nrow(gapminder), 5), ]
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+再現性のある分析を確保するために、コードをスクリプトファイルに保存し、後で再利用できるようにしましょう。
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ 3
+
+File -> New File -> R Script に移動し、`gapminder` データセットを読み込むための R スクリプトを作成します。このスクリプトを `scripts/` ディレクトリに保存し、バージョン管理に追加してください。 Put it in the `scripts/`
+directory and add it to version control.
+
+その後、`source` 関数を使用してスクリプトを実行します。ファイルパスを引数として指定するか、RStudio の「Source」ボタンを押します。
+
+:::::::::::::::  solution
+
+## チャレンジ 3 の解答
+
+`source` 関数はスクリプト内で別のスクリプトを使用するために使用できます。同じ種類のファイルを何度も読み込む必要がある場合、一度スクリプトとして保存すれば、以降はそれを繰り返し利用できます。
+Assume you would like to load the same type of file over and over
+again and therefore you need to specify the arguments to fit the
+needs of your file. Instead of writing the necessary argument again
+and again you could just write it once and save it as a script. `"stringsAsFactors"` 引数を使用すると、文字列を因子として読み込むか文字列として読み込むかを指定できます。R バージョン 4.0 以降では、デフォルトで文字列は文字型として読み込まれますが、古いバージョンでは因子として読み込まれるのがデフォルトでした。詳細は[前のエピソード](https://swcarpentry.github.io/r-novice-gapminder/04-data-structures-part1.html#check-your-data-for-factors)のコールアウトを参照してください。
+Check out `?source` to find out more.
+
+```{r, eval=FALSE}
+download.file("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/main/episodes/data/gapminder_data.csv", destfile = "data/gapminder_data.csv")
+gapminder <- read.csv(file = "data/gapminder_data.csv")
+```
+
+データを `gapminder` 変数に読み込むには次のようにします：
+
+```{r, eval=FALSE}
+source(file = "scripts/load-gapminder.R")
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ 4
+
+`str(gapminder)` の出力をもう一度読み、リストやベクトルについて学んだこと、および `colnames` や `dim` の出力を活用して、`str` が表示する内容を説明してください。理解できない部分があれば、隣の人と相談してみてください。
+今度は、順序なし因数、リスト、ベクトルについて学んだことを使いましょう。
+
+:::::::::::::::  solution
+
+## チャレンジ 4 の解答
+
+オブジェクト `gapminder` はデータフレームで、列は次のようになっています：
+
+- `country` と `continent` は文字列（character）。
+- `year` は整数型のベクトル。
+- `pop`、`lifeExp`、`gdpPercap` は数値型のベクトル。
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: keypoints
+
+- 新しい列をデータフレームに追加するには `cbind()` を使用します。
+- 新しい行をデータフレームに追加するには `rbind()` を使用します。
+- データフレームから行を削除します。
+- データフレームの構造を理解するために、`str()`、`summary()`、`nrow()`、`ncol()`、`dim()`、`colnames()`、`head()`、`typeof()` を使用します。
+- `read.csv()` を使用して CSV ファイルを読み込みます。
+- データフレームの `length()` が何を表しているのか理解します。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::

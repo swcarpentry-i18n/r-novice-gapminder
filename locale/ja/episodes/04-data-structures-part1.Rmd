@@ -1,0 +1,1011 @@
+---
+title: データ構造
+teaching: 40
+exercises: 15
+source: Rmd
+---
+
+::::::::::::::::::::::::::::::::::::::: objectives
+
+- 5 つの主なデータ型を特定できるようになる。
+- データフレームを探索し始め、ベクトルやリストとの関連を理解する。
+- R からオブジェクトの型、クラス、構造に関する質問ができるようになる。
+- "names"、"class"、"dim" 属性の情報を理解する。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: questions
+
+- R でデータをどのように読み取ることができますか？
+- R の基本的なデータ型は何ですか？
+- R でカテゴリ情報をどのように表現しますか？
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+```{r, include=FALSE}
+options(stringsAsFactors = FALSE)
+cats_orig <- data.frame(coat = c("calico", "black", "tabby"), weight = c(2.1, 5, 3.2), likes_catnip = c(1, 0, 1), stringsAsFactors = FALSE)
+cats_bad <- data.frame(coat = c("calico", "black", "tabby", "tabby"), weight = c(2.1, 5, 3.2, "2.3 or 2.4"), likes_catnip = c(1, 0, 1, 1), stringsAsFactors = FALSE)
+cats <- cats_orig
+```
+
+R の最も強力な機能の 1 つは、スプレッドシートや CSV ファイルにすでに保存されているような表形式データを処理する能力です。まずは、`data/` ディレクトリに `feline-data.csv` という名前の小さなデータセットを作成しましょう： まず、 `data/` ディレクトリに `feline-data.csv` というお試しのデータセットを作ってみましょう。
+
+```{r}
+cats <- data.frame(coat = c("calico", "black", "tabby"),
+                    weight = c(2.1, 5.0, 3.2),
+                    likes_catnip = c(1, 0, 1))
+```
+
+次に、`cats` を CSV ファイルとして保存します。 引数名を明示的に指定することは良い習慣であり、関数が変更されたデフォルト値を認識できます。 この場合は `row.names = FALSE` を設定しています。 引数名やそのデフォルト値を確認するには、`?write.csv` を使用してヘルプファイルを表示してください。
+
+```{r}
+write.csv(x = cats, file = "data/feline-data.csv", row.names = FALSE)
+```
+
+新しいファイル `feline-data.csv` の内容は次の通りです：
+
+```{r, eval=FALSE}
+coat,weight,likes_catnip
+calico,2.1,1
+black,5.0,0
+tabby,3.2,1
+```
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+### ヒント: R でテキストファイルを編集する
+
+または、テキストエディタ（Nano）や RStudio の **File -> New File -> Text File** メニュー項目を使用して `data/feline-data.csv` を作成することもできます。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+このデータを R に読み込むには、以下のコマンドを使用します：
+
+```{r}
+cats <- read.csv(file = "data/feline-data.csv")
+cats
+```
+
+`read.table` 関数は、CSV ファイル（csv = comma-separated values）などのテキストファイルに保存された表形式データを読み取るために使用されます。タブやカンマは、CSV ファイルでデータポイントを区切るために最も一般的に使用される記号です。R では `read.table` の便利なバージョンとして `read.csv`（データがカンマで区切られている場合）と `read.delim`（データがタブで区切られている場合）が用意されています。この 3 つの中で、`read.csv` が最も一般的に使用されます。必要に応じて、デフォルトの区切り記号を変更することもできます。 タブとコンマは、csvファイルでデータ点を区切る、又は分けるために使われる 最も一般的な句読文字です。
+便宜上、Rでは、他に２つの`read.table`のバージョンが提供されています。 ひとつは、データがコンマで分けられているファイルのための `read.csv` 、 データがタブで分けられているファイルのための `read.delim` です。 これら３つの関数のうち、`read.csv` が最も広く使われています。  必要であれば、 `read.csv` と `read.delim`、両方の デフォルトの句読記号を置き換えることができます。
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+### データが因子かどうかを確認する
+
+最近、R がテキストデータを処理する方法が変更されました。 以前は、R はテキストデータを自動的に "因子" という形式に変換していました。 が、現在は "文字列" という形式で処理されるようになりました。 因子の使用用途については後ほど学びますが、ほとんどの場合は必要なく、使用することで複雑になるだけです。 そのため、新しい R バージョンではテキストデータが "文字列" として読み取られます。 因子が自動的に作成されているかを確認し、必要に応じて文字列形式に変換してください：
+
+1. 入力データの型を確認するには、`str(cats)` を入力します。
+2. 出力で、コロンの後にある 3 文字のコードを確認します：`num` と `chr` のみが表示される場合は、レッスンを続けることができます。このボックスはスキップしてください。`fct` が見つかった場合は、次の手順に進んでください。
+   `fct` が見つかった場合は、手順の3に進んでください。
+3. R が因子データを自動的に作成しないようにするには、以下のコードを実行します： `options(stringsAsFactors = FALSE)`。 その後、`cats` テーブルを再読み込みして変更を反映させます。
+4. R を再起動するたびに、このオプションを設定する必要があります。忘れないように、データを読み込む前にスクリプトの最初の行のいずれかに含めてください。
+5. R バージョン 4.0.0 以降では、テキストデータは因子に変換されなくなりました。問題を回避するためにこのバージョン以降をインストールすることを検討してください。研究所や会社のコンピュータを使用している場合は、管理者に依頼してください。 問題を回避するためにこのバージョン以降をインストールすることを検討してください。 研究所や会社のコンピュータを使用している場合は、管理者に依頼してください。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+データセットをすぐに探索し始めることができます。たとえば、`$` 演算子を使用して列を指定します：
+
+```{r}
+cats$weight
+cats$coat
+```
+
+列に対して操作を実行することもできます：
+
+```{r}
+## たとえば、スケールが 2kg 軽いことが判明した場合：
+cats$weight + 2
+paste("My cat is", cats$coat)
+```
+
+でも、こうしたらどうだろう
+
+```{r}
+cats$weight + cats$coat
+```
+
+ここで何が起こったのかを理解することが、R でデータを成功裏に分析する鍵です。
+
+### データ型
+
+最後のコマンドがエラーを返す理由が `2.1` と `"black"` を加算するのは無意味だからだと推測したなら、あなたは正しいです！これはプログラミングにおける重要な概念である _データ型_ に関する直感をすでに持っているということです。データの型を調べるには、次のように入力します： データ型が何かを知るには、以下を使います：
+
+```{r}
+typeof(cats$weight)
+```
+
+主なデータ型は次の 5 種類です：`double`、`integer`、`complex`、`logical`、`character`。
+歴史的な理由で、`double` は `numeric` とも呼ばれます。
+For historic reasons, `double` is also called `numeric`.
+
+```{r}
+typeof(3.14)
+typeof(1L) # L サフィックスを付けると数値を整数に強制します（R はデフォルトで浮動小数点数を使用）
+typeof(1+1i)
+typeof(TRUE)
+typeof('banana')
+```
+
+分析がどれだけ複雑であっても、R ではすべてのデータがこれらの基本的なデータ型のいずれかとして解釈されます。この厳格さには非常に重要な意味があります。 この厳格性によって、とても重要なことが後々起こることもあります。
+
+あるユーザーが他の猫の詳細を加えたとします。 別の猫の詳細を追加した情報が、ファイル `data/feline-data_v2.csv` に保存されています。
+
+```{r, eval=FALSE}
+file.show("data/feline-data_v2.csv")
+```
+
+```{r, eval=FALSE}
+coat,weight,likes_catnip
+calico,2.1,1
+black,5.0,0
+tabby,3.2,1
+tabby,2.3 or 2.4,1
+```
+
+この新しい猫データを以前と同じ方法で読み込み、`weight` 列にどのようなデータ型が含まれているか確認します：
+
+```{r}
+cats <- read.csv(file="data/feline-data_v2.csv")
+typeof(cats
+
+$weight)
+```
+
+なんと、この weight はdouble型ではないじゃありませんか！ 前と同じように計算をしようとすると、 やっかいなことになります：
+
+```{r}
+cats$weight + 2
+```
+
+何が起こったのでしょう？
+私たちが扱っている `cats` データは _データフレーム_ と呼ばれるものです。 データフレームは、R で最も一般的で多用途な _データ構造_ の 1 つです。
+データフレームのそれぞれの列には異なるデータ型を混在させることはできません。
+何が起こったのでしょうか？
+私たちが扱っている `cats` データは _データフレーム_ と呼ばれるものです。データフレームは、R で最も一般的で多用途な _データ構造_ の 1 つです。
+データフレームの特定の列には異なるデータ型を混在させることはできません。
+この場合、R はデータフレーム列 `weight` のすべてを _double_ として読み取らなかったため、列全体のデータ型がその列内のすべてに適した型に変わります。
+
+R が CSV ファイルを読み取ると、それは _データフレーム_ として読み込まれます。そのため、`cats` CSV ファイルを読み込むと、データフレームとして保存されます。データフレームは `str()` 関数によって表示される最初の行で認識できます： Thus, when we loaded the `cats`
+csv file, it is stored as a data frame. データフレームは `str()` 関数によって表示される最初の行で認識できます：
+
+```{r}
+str(cats)
+```
+
+_データフレーム_ は行と列で構成され、各列は同じ数の行を持ちます。 データフレームの異なる列は異なるデータ型で構成できます（これがデータフレームを非常に柔軟にする理由です）が、特定の列内ではすべてが同じ型である必要があります（例：ベクトル、因子、リストなど）。
+
+さまざまなデータ構造とそれらの振る舞いについて詳しく見てみましょう。
+猫のデータから余分な行を削除してから、もう一度読み込みしましょう：
+
+feline-data.csv:
+
+```
+coat,weight,likes_catnip
+calico,2.1,1
+black,5.0,0
+tabby,3.2,1
+```
+
+そして RStudio 内で：
+
+```{r, eval=FALSE}
+cats <- read.csv(file="data/feline-data.csv")
+```
+
+```{r, include=FALSE}
+cats <- cats_orig
+```
+
+### ベクトルと型の強制変換
+
+この挙動をよりよく理解するために、別のデータ構造である _ベクトル_ を紹介します。
+
+```{r}
+my_vector <- vector(length = 3)
+my_vector
+```
+
+R におけるベクトルは、基本的に順序付けられた要素のリストです。ただし、特別な条件として、_ベクトル内のすべての要素は同じ基本データ型である必要があります_。 もし、データ型を選ばなければ、デフォルトで`logical`になりますが、好きなデータ型を持つ空のベクトルを 宣言することもできます。
+
+```{r}
+another_vector <- vector(mode='character', length=3)
+another_vector
+```
+
+あるオブジェクトがベクトルかどうかを確認することもできます：
+
+```{r}
+str(another_vector)
+```
+
+このコマンドのやや難解な出力は、このベクトルに含まれる基本データ型（この場合は `chr`、文字型）を示し、ベクトル内の要素数（この場合は `[1:3]`）、および実際に含まれる要素（この場合は空の文字列）を示します。 同様に次のコマンドを実行すると、
+
+```{r}
+str(cats$weight)
+```
+
+`cats$weight` もベクトルであることがわかります。_R のデータフレームに読み込まれる列はすべてベクトルです_。これが、R が列内のすべての要素を同じ基本データ型に強制する理由の根本です。
+
+::::::::::::::::::::::::::::::::::::::  discussion
+
+### 討論 1 の解答
+
+なぜ R は列に含まれるデータに対してこれほど厳格なのでしょうか？
+この厳格さは私たちにどのように役立つのでしょうか？
+How does this help us?
+
+:::::::::::::::  solution
+
+### 討論 1
+
+By keeping everything in a column the same, we allow ourselves to make simple
+assumptions about our data; if you can interpret one entry in the column as a
+number, then you can interpret _all_ of them as numbers, so we don't have to
+check every time. This consistency is what people mean when they talk about
+_clean data_; in the long run, strict consistency goes a long way to making
+our lives easier in R.
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+#### Coercion by combining vectors
+
+明示的な内容を持つベクトルを `c()` 関数で作成できます：
+
+```{r}
+combine_vector <- c(2,6,3)
+combine_vector
+```
+
+これまで学んだことを踏まえて、以下は何を生み出すでしょうか。
+
+```{r}
+quiz_vector <- c(2,6,'3')
+```
+
+This is something called _type coercion_, and it is the source of many surprises
+and the reason why we need to be aware of the basic data types and how R will
+interpret them. これは _型の強制変換_ と呼ばれるもので、予想外の結果をもたらすことがあり、基本データ型と R がそれをどのように解釈するかを理解する必要があります。R は、異なる型（ここでは `double` と `character`）が単一のベクトルに結合される場合、それらをすべて同じ型に強制します。例を見てみましょう： Consider:
+
+```{r}
+coercion_vector <- c('a', TRUE)
+coercion_vector
+another_coercion_vector <- c(0, TRUE)
+another_coercion_vector
+```
+
+#### 型の階層
+
+型の強制変換ルールは次の通りです：\
+`logical` -> `integer` -> `double` ("`numeric`") -> `complex` -> `character`\
+この矢印は「_変換される_」と読めます。たとえば、`logical` と `character` を結合すると、結果は `character` に変換されます： For
+example, combining `logical` and `character` transforms the result to
+`character`:
+
+```{r}
+c('a', TRUE)
+```
+
+`character` ベクトルは、印刷時にクォートで囲まれていることで簡単に認識できます。
+
+この流れに逆らう強制化も、`as.` 関数を使ってできます：
+
+```{r}
+character_vector_example <- c('0','2','4')
+character_vector_example
+character_coerced_to_double <- as.double(character_vector_example)
+character_coerced_to_double
+double_coerced_to_logical <- as.logical(character_coerced_to_double)
+double_coerced_to_logical
+```
+
+ご覧のとおり、Rがある基本のデータ型を他へ変換すると、驚くことが起こります。 R が基本データ型を他の型に強制する際に驚くべきことが起こる場合があります！型の強制変換の細かい点はさておき、重要なのは：データが予想していた形式と異なる場合、それは型の強制変換が原因である可能性が高いです。ベクトルやデータフレームの列内のすべてのデータが同じ型であることを確認してください。さもなければ、予想外の問題が発生する可能性があります！
+
+But coercion can also be very useful! For example, in our `cats` data
+`likes_string` is numeric, but we know that the 1s and 0s actually represent
+`TRUE` and `FALSE` (a common way of representing them). We should use the
+`logical` datatype here, which has two states: `TRUE` or `FALSE`, which is
+exactly what our data represents. We can 'coerce' this column to be `logical` by
+using the `as.logical` function:
+
+```{r}
+cats$likes_catnip
+cats$likes_catnip <- as.logical(cats$likes_catnip)
+cats$likes_catnip
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 1
+
+An important part of every data analysis is cleaning the input data. データ分析の重要な部分は、入力データのクリーンアップです。入力データがすべて同じ形式（例：数値）であることを知っていると、分析がはるかに簡単になります！型の強制変換に関する章で扱った猫のデータセットをクリーンアップしましょう。 Clean the cat data set from the chapter about
+type coercion.
+
+#### コードテンプレートをコピー
+
+RStudio で新しいスクリプトを作成し、以下のコードをコピー＆ペーストしてください。その後、以下のタスクを参考にギャップ（\_\_\_\_\_\_）を埋めてください。 Then
+move on to the tasks below, which help you to fill in the gaps (\_\_\_\_\_\_).
+
+```
+# データを読み込み
+cats <- read.csv("data/feline-data_v2.csv")
+
+# 1. データを表示
+_____
+
+# 2. 表の概要をデータ型と共に表示
+_____(cats)
+
+# 3. "weight" 列の現在のデータ型 __________。
+#    正しいデータ型は： ____________。
+
+# 4. 4 番目の "weight" データポイントを指定された 2 つの値の平均に修正
+cats$weight[4] <- 2.35
+#    効果を確認するためにデータを再表示
+cats
+
+# 5. "weight" を正しいデータ型に変換
+cats$weight <- ______________(cats$weight)
+
+#    自分でテストするために平均を計算
+mean(cats$weight)
+
+# 正しい平均値（NA ではない）が表示されたら、演習は完了です！
+```
+
+### タスクの手順
+
+#### 1\. しかし、強制変換は非常に便利な場合もあります！たとえば、`cats` データの `likes_catnip` 列は数値型ですが、実際には 1 と 0 がそれぞれ `TRUE` と `FALSE` を表しています。このデータには `logical` 型を使用すべきです。この型は `TRUE` または `FALSE` の 2 状態を持ち、データの意味に完全に一致します。この列を `logical` に「強制変換」するには、`as.logical` 関数を使用します：
+
+最初のステートメント（`read.csv(...)`）を実行します。その後、データをコンソールに表示します。 Then print the data to the
+console
+
+:::::::::::::::  solution
+
+### ヒント 1.1
+
+任意の変数の内容を表示するには、その名前を入力します。
+
+### チャレンジ 1.1 の解答
+
+2 つの正しい解答：
+
+```
+cats
+print(cats)
+```
+
+:::::::::::::::::::::::::
+
+#### 2\. 「データ型」の章で、データ型を表示する 2 つの関数を見ました。1 つはデータ型の名前だけを出力し、もう 1 つは短い形式のデータ型と最初の値を出力しました。ここでは後者を使用します。
+
+The data type of your data is as important as the data itself. Use a
+function we saw earlier to print out the data types of all columns of the
+`cats` table.
+
+:::::::::::::::  solution
+
+### ヒント 1.2
+
+In the chapter "Data types" we saw two functions that can show data types.
+One printed just a single word, the data type name. The other printed
+a short form of the data type, and the first few values. We need the second
+here.
+
+:::::::::::::::::::::::::
+
+> ### チャレンジ 1.2 の解答
+>
+> ```
+> str(cats)
+> ```
+
+#### 3\. データ型はデータ自体と同じくらい重要です。以前見た関数を使用して、`cats` テーブルのすべての列のデータ型を表示します。
+
+表示されるデータ型は、このデータ（猫の体重）には適していません。必要なデータ型はどれですか？ なデータ型はどれですか？
+
+- なぜ `read.csv()` 関数は正しいデータ型を選ばなかったのでしょうか？
+- コメントのギャップに猫の体重に適したデータ型を埋めてください！
+
+:::::::::::::::  solution
+
+### ヒント 1.3
+
+[型の階層](#the-type-hierarchy) のセクションに戻り、利用可能なデータ型を確認してください。
+
+:::::::::::::::::::::::::
+
+:::::::::::::::  solution
+
+### チャレンジ 1.3 の解答
+
+- 体重は連続スケール（実数）で表されます。この場合の R のデータ型は "double"（"numeric" とも呼ばれます）です。 4 行目の値は "2.3 or 2.4" であり、数値ではなく英単語が含まれています。そのため、"character" 型が選ばれます。同じ列内のすべての値が同じデータ型である必要があるため、列全体がテキスト型になっています。
+- The fourth row has the value "2.3 or 2.4". That is not a number
+  but two, and an english word. Therefore, the "character" data type
+  is chosen. The whole column is now text, because all values in the same
+  columns have to be the same data type.
+
+:::::::::::::::::::::::::
+
+#### 4\. Correct the problematic value
+
+問題のある 4 行目に新しい体重値を割り当てるコードが提供されています。実行する前に考えてみてください。この例のように数値を割り当てた後のデータ型はどうなりますか？
+実行後にデータ型を確認して、自分の予測が正しいか確認してください。
+Think first and then execute it: What will be the data type after assigning
+a number like in this example?
+You can check the data type after executing to see if you were right.
+
+:::::::::::::::  solution
+
+### ヒント 1.4
+
+2 つの異なるデータ型が組み合わされた場合の型の階層を再確認してください。
+
+:::::::::::::::::::::::::
+
+> ### チャレンジ 1.4 の解答
+>
+> 列 "weight" のデータ型は "character" です。割り当てるデータ型は "double" です。異なるデータ型を組み合わせると、次の階層でより高いデータ型に変換されます： あらら、`weight` 列の型が `double` ではなくなっています！以前と同じ計算を試みると、問題が発生します： Combining two data types yields the data type that is
+> higher in the following hierarchy:
+>
+> ```
+> logical < integer < double < complex < character
+> ```
+>
+> したがって、列はまだ "character" 型です！これを "double" 型に手動で変換する必要があります。 We need to manually
+> convert it to "double".
+> {: .solution}
+
+#### 5\. Convert the column "weight" to the correct data type
+
+猫の体重は数値です。しかし、列にはまだ適切なデータ型が設定されていません。この列を浮動小数点数に強制変換してください。 But the column does not have this data type yet.
+Coerce the column to floating point numbers.
+
+:::::::::::::::  solution
+
+### ヒント 1.5
+
+データ型を変換する関数は `as.` で始まります。このスクリプトの上部で関数を確認するか、RStudio のオートコンプリート機能を使用してください。 "`as.`" と入力し、TAB キーを押します。 You can look
+for the function further up in the manuscript or use the RStudio
+auto-complete function: Type "`as.`" and then press the TAB key.
+
+:::::::::::::::::::::::::
+
+> ### チャレンジ 1.5 の解答
+>
+> 歴史的な理由で、2 つの同義の関数があります：
+>
+> ```
+> cats$weight <- as.double(cats$weight)
+> cats$weight <- as.numeric(cats$weight)
+> ```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+### 基本的なベクトル関数
+
+`c()` 関数を使用すると、既存のベクトルに新しい要素を追加することができます：
+
+```{r}
+ab_vector <- c('a', 'b')
+ab_vector
+combine_example <- c(ab_vector, 'SWC')
+combine_example
+```
+
+また、数列を生成することも可能です：
+
+```{r}
+mySeries <- 1:10
+mySeries
+seq(10)
+seq(1, 10, by=0.1)
+```
+
+ベクトルについていくつかの質問をすることもできます：
+
+```{r}
+sequence_example <- 20:25
+head(sequence_example, n=2)
+tail(sequence_example, n=4)
+length(sequence_example)
+typeof(sequence_example)
+```
+
+ベクトルの特定の要素を取得するには、角括弧記法を使用します：
+
+```{r}
+first_element <- sequence_example[1]
+first_element
+```
+
+特定の要素を変更するには、角括弧を矢印の右側に使用します：
+
+```{r}
+sequence_example[1] <- 30
+sequence_example
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 2
+
+1 から 26 までの数を含むベクトルを作成します。その後、このベクトルを 2 倍にします。
+単一ブラケットを使用し、行と列の座標を指定します。この場合、1 行目 1 列目の値が返されます。オブジェクトは _character_ 型のベクトルです。
+
+:::::::::::::::  solution
+
+### チャレンジ 2 の解答
+
+```{r}
+x <- 1:26
+x <- x * 2
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+### リスト
+
+覚えておきたいもう一つのデータ構造は、 `list` です。 リストは、他の種類よりも、ある意味シンプルです。その理由は、入れたいものを なんでも入れることができるからです： 次に紹介するデータ構造は `list` です。リストは他のデータ型よりもシンプルで、_何でも入れることができる_のが特徴です。ベクトルでは要素の基本データ型を統一する必要がありましたが、リストは異なるデータ型を持つことができます：
+
+```{r}
+list_example <- list(1, "a", TRUE, 1+4i)
+list_example
+```
+
+`str()` を使用してオブジェクトの構造を表示すると、すべての要素のデータ型を確認できます：
+
+```{r}
+str(list_example)
+```
+
+リストの用途は何でしょうか？例えば、異なるデータ型を持つ関連データを整理できます。これは、Excel のスプレッドシートのように複数の表をまとめるのと似ています。他にも多くの用途があります。 They can **organize data of different types**. For
+example, you can organize different tables that belong together, similar to
+spreadsheets in Excel. But there are many other uses, too.
+
+次の章で、驚くかもしれない別の例を紹介します。
+
+リストの特定の要素を取得するには **二重角括弧** を使用します：
+
+```{r}
+list_example[[2]]
+```
+
+リストの要素には **名前** を付けることもできます。名前を値の前に等号で指定します：
+
+```{r}
+another_list <- list(title = "Numbers", numbers = 1:10, data = TRUE )
+another_list
+```
+
+これにより **名前付きリスト** が生成されます。これで新しいアクセス方法が追加されます！ Now we have a new function of our object!
+We can access single elements by an additional way!
+
+```{r}
+another_list$title
+```
+
+## 名前
+
+With names, we can give meaning to elements. It is the first time that we do not
+only have the **data**, but also explaining information. It is _metadata_
+that can be stuck to the object like a label. In R, this is called an
+**attribute**. Some attributes enable us to do more with our
+object, for example, like here, accessing an element by a self-defined name.
+
+### 名前を使用してベクトルやリストにアクセスする
+
+名前付きリストの生成方法はすでに学びました。名前付きベクトルを生成する方法も非常に似ています。以前このような関数を見たことがあるはずです： ベクトルを結合する際の型の強制変換 You have seen this function before:
+
+```{r}
+pizza_price <- c( pizzasubito = 5.64, pizzafresh = 6.60, callapizza = 4.50 )
+```
+
+しかし、要素の取得方法はリストとは異なります：
+
+```{r}
+pizza_price["pizzasubito"]
+```
+
+リストのアプローチは機能しません：
+
+```{r}
+pizza_price$pizzafresh
+```
+
+It will pay off if you remember this error message, you will meet it in your own
+analyses. このエラーメッセージを覚えておくと役立ちます。同じようなエラーに遭遇することが多いですが、これはリストと勘違いしてベクトルの要素にアクセスしようとした場合に発生します。
+
+### 名前の取得と変更
+
+名前だけに興味がある場合は、`names()` 関数を使用します：
+
+```{r}
+names(pizza_price)
+```
+
+ベクトルの要素にアクセスしたり変更したりする方法を学びました。同じことが名前についても可能です： The same is
+possible for names:
+
+```{r}
+names(pizza_price)[3]
+names(pizza_price)[3] <- "call-a-pizza"
+pizza_price
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 3
+
+- `pizza_price` の名前のデータ型は何ですか？`str()` または `typeof()` 関数を使用して調べてください。 You can find out
+  using the `str()` or `typeof()` functions.
+
+:::::::::::::::  solution
+
+### チャレンジ 3 の解答
+
+名前を使用すると、要素に意味を持たせることができます。これにより、データだけでなく説明情報も持つことができます。これはオブジェクトに貼り付けられるラベルのような _メタデータ_ です。R ではこれは **属性** と呼ばれます。属性により、オブジェクトをさらに操作することが可能になります。ここでは、定義された名前で要素にアクセスすることができます。 オブジェクトの名前を取得するには、その名前を `names(...)` で囲みます。同様に、名前のデータ型を取得するには、全体をさらに `typeof(...)` で囲みます：
+
+```
+typeof(names(pizza))
+```
+
+または、コードをわかりやすくするために新しい変数を使用します：
+
+```
+n <- names(pizza)
+typeof(n)
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 4
+
+既存のベクトルやリストの一部の名前を変更する代わりに、オブジェクトのすべての名前を設定することも可能です。次のコード形式を使用します（すべての大文字部分を置き換えてください）：
+
+```
+names( OBJECT ) <-  CHARACTER_VECTOR
+```
+
+アルファベットの各文字に番号を割り当てるベクトルを作成しましょう！
+
+1. 1 から 26 の数列を持つ `letter_no` というベクトルを作成します。
+2. R has a built-in object called `LETTERS`. R には `LETTERS` という組み込みオブジェクトがあります。これは A から Z までの 26 文字を含むベクトルです。この 26 文字を `letter_no` の名前として設定します。
+3. `letter_no["B"]` を呼び出して、値が 2 であることを確認してください！
+
+:::::::::::::::  solution
+
+### チャレンジ 4 の解答
+
+```
+letter_no <- 1:26   # or seq(1,26)
+names(letter_no) <- LETTERS
+letter_no["B"]
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## データフレーム
+
+We have data frames at the very beginning of this lesson, they represent
+a table of data. このレッスンの冒頭でデータフレームについて簡単に触れましたが、それはデータの表形式を表しています。例として示した猫のデータフレームについては詳細に掘り下げていませんでした：
+
+```{r}
+cats
+```
+
+これで、data.frameの驚くべき特徴を理解することができます。もし以下を走らせたらどうなるでしょう：
+
+```{r}
+typeof(cats)
+```
+
+データフレームが「内部的にはリストのように見える」ことがわかります。以前、リストについて次のように説明しました： Think again what we
+heard about what lists can be used for:
+
+> リストは異なる型のデータを整理するためのもの
+
+データフレームの列は、それぞれが異なる型のベクトルであり、同じ表に属することで整理されています。
+
+データフレームは実際にはベクトルのリストです。データフレームが特別なのは、すべてのベクトルが同じ長さでなければならない点です。 二重ブラケット `[[1]]` はリスト項目の内容を返します。この場合、最初の列の内容である _character_ 型のベクトルです。
+
+この「特別さ」はどのようにオブジェクトに組み込まれているのでしょうか？R がそれを単なるリストではなく、表として扱うのはなぜでしょう？
+
+```{r}
+class(cats)
+```
+
+単一ブラケット `["coat"]` を使用し、インデックス番号の代わりに列名を指定します。例 1 と同様に、返されるオブジェクトは _list_ です。 It tells
+us what this object means for humans.
+
+You might wonder: Why do we need another what-type-of-object-is-this-function?
+We already have `typeof()`? That function tells us how the object is
+**constructed in the computer**. **クラス** は名前と同様に、オブジェクトに付加される属性です。この属性は、そのオブジェクトが人間にとって何を意味するのかを示します。 ここで疑問に思うかもしれません：なぜオブジェクトの型を判断するための関数がもう一つ必要なのでしょうか？すでに `typeof()` がありますよね？\
+`typeof()` はオブジェクトが**コンピュータ内でどのように構築されているか**を教えてくれます。一方、`class()` はオブジェクトの**人間にとっての意味**を示します。したがって、`typeof()` の出力は R で固定されています（主に 5 種類のデータ型）が、`class()` の出力は R パッケージによって多様で拡張可能です。
+
+我々の `cats` の例では、整数型（integer）、浮動小数型（double）、論理型（logical）の変数があります。 `cats` の例では、整数型、倍精度数値型、論理型の変数が含まれています。すでに見たように、データフレームの各列はベクトルです：
+
+```{r}
+cats$coat
+cats[,1]
+typeof(cats[,1])
+str(cats[,1])
+```
+
+一方、各行は異なる変数の_観測値_であり、それ自体がデータフレームであり、異なる型の要素で構成されることができます：
+
+```{r}
+cats[1,]
+typeof(cats[1,])
+str(cats[1,])
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 5
+
+データフレームから変数、観測値、要素を取得する方法はいくつかあります：
+
+- `cats[1]`
+- `cats[[1]]`
+- `cats$coat`
+- `cats["coat"]`
+- `cats[1, 1]`
+- `cats[, 1]`
+- `cats[1, ]`
+
+これらの例を試して、それぞれが何を返すのかを説明してください。
+
+_ヒント:_ 返されるものを調べるには、`typeof()` 関数を使用してください。
+
+:::::::::::::::  solution
+
+### チャレンジ 5 の解答
+
+```{r, eval=TRUE, echo=TRUE}
+cats[1]
+```
+
+データフレームはベクトルのリストと考えられます。単一ブラケット `[1]` はリストの最初のスライスを別のリストとして返します。この場合、それはデータフレームの最初の列です。 The single brace `[1]`
+returns the first slice of the list, as another list. In this case it is the
+first column of the data frame.
+
+```{r, eval=TRUE, echo=TRUE}
+cats[[1]]
+```
+
+The double brace `[[1]]` returns the contents of the list item. In this case
+it is the contents of the first column, a _vector_ of type _character_.
+
+```{r, eval=TRUE, echo=TRUE}
+cats$coat
+```
+
+This example uses the `$` character to address items by name. `$` を使用して名前で項目にアクセスします。`coat` はデータフレームの最初の列であり、_character_ 型のベクトルです。
+
+```{r, eval=TRUE, echo=TRUE}
+cats["coat"]
+```
+
+Here we are using a single brace `["coat"]` replacing the index number with
+the column name. Like example 1, the returned object is a _list_.
+
+```{r, eval=TRUE, echo=TRUE}
+cats[1, 1]
+```
+
+This example uses a single brace, but this time we provide row and column
+coordinates. The returned object is the value in row 1, column 1. The object
+is a _vector_ of type _character_.
+
+```{r, eval=TRUE, echo=TRUE}
+cats[, 1]
+```
+
+Like the previous example we use single braces and provide row and column
+coordinates. 前の例と同様に単一ブラケットを使用し、行と列の座標を指定しますが、行座標が指定されていません。この場合、R は欠損値をその列のすべての要素として解釈し、_ベクトル_ として返します。
+
+```{r, eval=TRUE, echo=TRUE}
+cats[1, ]
+```
+
+Again we use the single brace with row and column coordinates. The column
+coordinate is not specified. The return value is a _list_ containing all the
+values in the first row.
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+### ヒント: データフレーム列の名前変更
+
+データフレームには列名があり、`names()` 関数でアクセスできます：
+
+```{r}
+names(cats)
+```
+
+`cats` の 2 番目の列の名前を変更したい場合は、`names(cats)` の 2 番目の要素に新しい名前を割り当てます：
+
+```{r}
+names(cats)[2] <- "weight_kg"
+cats
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+```{r, include=FALSE}
+# cats を元のバージョンに戻す
+cats <- cats_orig
+```
+
+### 行列
+
+Last but not least is the matrix. 最後に紹介するのは行列です。ゼロで満たされた行列を宣言してみましょう：
+
+```{r}
+matrix_example <- matrix(0, ncol=6, nrow=3)
+matrix_example
+```
+
+行列を特別なものにしているのは `dim()` 属性です：
+
+```{r}
+dim(matrix_example)
+```
+
+他のデータ構造と同様に、行列について質問することも可能です：
+
+```{r}
+typeof(matrix_example)
+class(matrix_example)
+str(matrix_example)
+nrow(matrix_example)
+ncol(matrix_example)
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 6
+
+次のコードの結果はどうなるでしょうか？
+Try it.
+Were you right? Why / why not?
+
+:::::::::::::::  solution
+
+### チャレンジ 6 の解答
+
+length(matrix_example)
+
+```{r}
+matrix_example <- matrix(0, ncol=6, nrow=3)
+length(matrix_example)
+```
+
+行列は次元属性を持つベクトルであるため、`length` は行列内の要素の総数を返します：
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 7
+
+もう一つ行列を作ってみましょう、今回は、1:50の数を含むもので、 ５行、10列を持つ行列にしましょう。
+1 から 50 の数値を含む、列数 5、行数 10 の行列を作成します。
+デフォルトの動作として、この行列は列ごとに値が埋められますか、それとも行ごとですか？
+その動作を変更する方法を調べてください。（ヒント：`matrix` のドキュメントを参照）
+これがどう変化したか理解したか確認してみましょう。
+(hint: read the documentation for `matrix`!)
+
+:::::::::::::::  solution
+
+### チャレンジ 7 の解答
+
+もう一つ行列を作ってみましょう、今回は、1:50の数を含むもので、 ５行、10列を持つ行列にしましょう。
+行列（Matrix）
+これがどう変化したか理解したか確認してみましょう。
+(hint: read the documentation for `matrix`!)
+
+```{r, eval=FALSE}
+x <- matrix(1:50, ncol=5, nrow=10)
+x <- matrix(1:50, ncol=5, nrow=10, byrow = TRUE) # 行ごとに埋める
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 8
+
+このワークショップの次のセクションに対応する 2 つの要素を持つリストを作成します：
+
+- データ型
+- データ構造
+
+各データ型およびデータ構造の名前を文字型ベクトルに格納してください。
+
+:::::::::::::::  solution
+
+### チャレンジ 8 の解答
+
+```{r}
+dataTypes <- c
+
+('double', 'complex', 'integer', 'character', 'logical')
+dataStructures <- c('data.frame', 'vector', 'list', 'matrix')
+answer <- list(dataTypes, dataStructures)
+```
+
+Note: it's nice to make a list in big writing on the board or taped to the wall
+listing all of these types and structures - leave it up for the rest of the workshop
+to remind people of the importance of these basics.
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+### チャレンジ 9
+
+R が因子データを自動的に作成しないようにするには、以下のコードを実行します：`options(stringsAsFactors = FALSE)`。その後、`cats` テーブルを再読み込みして変更を反映させます。
+
+```{r, echo=FALSE}
+matrix(c(4, 1, 9, 5, 10, 7), ncol = 2, byrow = TRUE)
+```
+
+この行列を作成するために使用された正しいコマンドはどれでしょうか？各コマンドを確認し、入力する前に正しいものを考えてください。\
+他のコマンドでどのような行列が作成されるかを考えてみてください。 それぞれのコマンドを確かめて、打ち込む前に正しいものが何か分かるようにしましょう。
+他のコマンドでは、どのような行列が作られるかを考えてみましょう。
+
+1. `matrix(c(4, 1, 9, 5, 10, 7), nrow = 3)`
+2. `matrix(c(4, 9, 10, 1, 5, 7), ncol = 2, byrow = TRUE)`
+3. `matrix(c(4, 9, 10, 1, 5, 7), nrow = 2)`
+4. `matrix(c(4, 1, 9, 5, 10, 7), ncol = 2, byrow = TRUE)`
+
+:::::::::::::::  solution
+
+### チャレンジ 9 の解答
+
+以下の行列の R 出力を考えてみてください：
+
+```{r, echo=FALSE}
+matrix(c(4, 1, 9, 5, 10, 7), ncol = 2, byrow = TRUE)
+```
+
+これまで学んだ内容を考えると、次のコードは何を生成すると思いますか？ それぞれのコマンドを確かめて、打ち込む前に正しいものが何か分かるようにしましょう。
+他のコマンドでは、どのような行列が作られるかを考えてみましょう。
+
+```{r, eval=FALSE}
+matrix(c(4, 1, 9, 5, 10, 7), ncol = 2, byrow = TRUE)
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: keypoints
+
+- `read.csv` を使用して R で表形式データを読み取ります。
+- R の基本データ型は、double、integer、complex、logical、character です。
+- データフレームや行列のようなデータ構造は、リストやベクトルを基にし、いくつかの属性が追加されています。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::

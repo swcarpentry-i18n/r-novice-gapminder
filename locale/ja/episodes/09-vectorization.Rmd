@@ -1,0 +1,314 @@
+---
+title: ベクトル化
+teaching: 10
+exercises: 15
+source: Rmd
+---
+
+::::::::::::::::::::::::::::::::::::::: objectives
+
+- To understand vectorized operations in R.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: questions
+
+- How can I operate on all the elements of a vector at once?
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+```{r, include=FALSE}
+gapminder <- read.csv("data/gapminder_data.csv", header = TRUE)
+library("ggplot2")
+```
+
+Rの関数はほとんどがベクトル化されており、関数はベクトルの全ての要素を最初から操作してくれるので、ベクトルの要素ごとにいちいちループする必要がありません。 おかげで簡潔で読み易く、エラーの少ないコードを書くことができます。
+
+```{r}
+x <- 1:4
+x * 2
+```
+
+積はベクトルの要素ごとに実行されました。
+
+2つのベクトルを足し合わせることもできます:
+
+```{r}
+y <- 6:9
+x + y
+```
+
+この場合 `x` の各要素が対応する `y`の要素に足されます。
+
+```{r, eval=FALSE}
+x:  1  2  3  4
+    +  +  +  +
+y:  6  7  8  9
+---------------
+    7  9 11 13
+```
+
+Here is how we would add two vectors together using a for loop:
+
+```{r}
+output_vector <- c()
+for (i in 1:4) {
+  output_vector[i] <- x[i] + y[i]
+}
+output_vector
+
+
+```
+
+Compare this to the output using vectorised operations.
+
+```{r}
+sum_xy <- x + y
+sum_xy
+```
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ１
+
+`gapminder` データセットの `pop` 列でこれに挑戦してみましょう。
+
+`gapminder` データフレームに百万人単位の人口を示す列を追加しましょう。
+データフレームの先頭か最後を確認して、追加に成功したか確認しましょう。
+
+:::::::::::::::  solution
+
+## チャレンジ８の解答 1
+
+`gapminder` データセットの `pop` 列でこれに挑戦してみましょう。
+
+`gapminder` データフレームに百万人単位の人口を示す列を追加しましょう。
+データフレームの先頭か最後を確認して、追加に成功したか確認しましょう。
+
+```{r}
+gapminder$pop_millions <- gapminder$pop / 1e6
+head(gapminder)
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ２
+
+一つの図に、100万人単位の人口を年ごとにプロットしてみましょう。 国ごとの区別はつかなくていいです。
+
+練習を繰り返して、中国とインドとインドネシアだけを含む図を 作ってみましょう。 先程と同じく、国ごとの区別はつかなくていいです。
+
+:::::::::::::::  solution
+
+## チャレンジ８の解答
+
+チャレンジの解答 100万人単位の人口を年ごとにプロットして、作図方法を復習しましょう。
+
+```{r ch2-sol, fig.alt="Scatter plot showing populations in the millions against the year for China, India, and Indonesia, countries are not labeled."}
+ggplot(gapminder, aes(x = year, y = pop_millions)) +
+ geom_point()
+countryset <- c("China","India","Indonesia")
+ggplot(gapminder[gapminder$country %in% countryset,],
+       aes(x = year, y = pop_millions)) +
+  geom_point()
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+比較演算子や論理演算子に加え、多くの関数もベクトル化されています。
+
+**比較演算子**
+
+```{r}
+x > 2
+```
+
+**論理演算子**
+
+```{r}
+a <- x 3 # より明確な書き方は a <- (x 3) a
+```
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Tip: 論理ベクトルに使える便利な関数
+
+- `any()` はベクトルの要素の中に一つでも `TRUE` があれば `TRUE` を返します。
+- `all()` はベクトルの要素が 全て `TRUE` であれば `TRUE` を返します。
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+ほとんどの関数はベクトルを要素ごとに処理します。
+
+**関数**
+
+```{r}
+x <- 1:4
+log(x)
+```
+
+ベクトル化された操作は行列を要素ごとに処理します:
+
+```{r}
+m <- matrix(1:12, nrow=3, ncol=4)
+m * -1
+```
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Tip: 要素ごとの積 vs. 行列の積
+
+非常に重要: ` ` 演算子は要素ごとの積を行います！
+To do matrix multiplication, we need to use the `%*%` operator:
+
+```{r}
+m %*% matrix(1, nrow=4, ncol=1)
+matrix(1:4, nrow=1) %*% matrix(1:4, ncol=1)
+```
+
+更に行列代数について知るには [Quick-R reference guide](https://www.statmethods.net/advstats/matrix.html) を参照して下さい
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ３
+
+以下のリストがあるとします：
+
+```{r}
+m <- matrix(1:12, nrow=3, ncol=4)
+m
+```
+
+Write down what you think will happen when you run:
+
+1. `m ^ -1`
+2. `m * c(1, 0, -1)`
+3. `m > c(0, 20)`
+4. `m * c(1, 0, -1, 2)`
+
+Did you get the output you expected? If not, ask a helper!
+
+:::::::::::::::  solution
+
+## チャレンジ３の解答
+
+以下のリストがあるとします：
+
+```{r}
+m <- matrix(1:12, nrow=3, ncol=4)
+m
+```
+
+Write down what you think will happen when you run:
+
+1. `m ^ -1`
+
+```{r, echo=FALSE}
+m ^ -1
+```
+
+2. `m * c(1, 0, -1)`
+
+```{r, echo=FALSE}
+m * c(1, 0, -1)
+```
+
+3. `m > c(0, 20)`
+
+```{r, echo=FALSE}
+m > c(0, 20)
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## チャレンジ４
+
+以下の分数の数列の総和が知りたいとします: ~~~ x:
+
+```{r, eval=FALSE}
+ x = 1/(1^2) + 1/(2^2) + 1/(3^2) + ... + 1/(n^2)
+```
+
+- /(n^) ~~~  これをタイプするのは面倒な上に、nが大きいと不可能です。  ベクトル化を用いて n = 100 の場合を計算しましょう。 n = 10,000 の時の総和はいくつでしょうか？
+
+:::::::::::::::  solution
+
+## チャレンジ４
+
+以下の分数の数列の総和が知りたいとします: ~~~ x:
+
+```{r, eval=FALSE}
+ x = 1/(1^2) + 1/(2^2) + 1/(3^2) + ... + 1/(n^2)
+```
+
+- /(n^) ~~~  これをタイプするのは面倒な上に、nが大きいと不可能です。
+  ベクトル化を用いて n = 100 の場合を計算しましょう。
+  n = 10,000 の時の総和はいくつでしょうか？
+
+```{r}
+sum(1/(1:100)^2)
+sum(1/(1:1e04)^2)
+n <- 10000
+sum(1/(1:n)^2)
+```
+
+We can also obtain the same results using a function:
+
+```{r}
+inverse_sum_of_squares <- function(n) {
+  sum(1/(1:n)^2)
+}
+inverse_sum_of_squares(100)
+inverse_sum_of_squares(10000)
+n <- 10000
+inverse_sum_of_squares(n)
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Tip: Operations on vectors of unequal length
+
+Operations can also be performed on vectors of unequal length, through
+a process known as _recycling_. This process automatically repeats the smaller vector
+until it matches the length of the larger vector. R will provide a warning
+if the larger vector is not a multiple of the smaller vector.
+
+```{r}
+x <- c(1, 2, 3)
+y <- c(1, 2, 3, 4, 5, 6, 7)
+x + y
+```
+
+Vector `x` was recycled to match the length of vector `y`
+
+```{r, eval=FALSE}
+x:  1  2  3  1  2  3  1
+    +  +  +  +  +  +  +
+y:  1  2  3  4  5  6  7
+-----------------------
+    2  4  6  5  7  9  8
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: keypoints
+
+- Use vectorized operations instead of loops.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
