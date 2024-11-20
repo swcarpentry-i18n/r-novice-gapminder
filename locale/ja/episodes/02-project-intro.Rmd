@@ -1,5 +1,5 @@
 ---
-title: Project Management With RStudio
+title: RStudio を使ったプロジェクト管理
 teaching: 20
 exercises: 10
 source: Rmd
@@ -7,13 +7,13 @@ source: Rmd
 
 ::::::::::::::::::::::::::::::::::::::: objectives
 
-- Create self-contained projects in RStudio
+- RStudio で自己完結型のプロジェクトを作成する
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::: questions
 
-- How can I manage my projects in R?
+- R でプロジェクトをどのように管理できますか？
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -22,92 +22,82 @@ source: Rmd
 
 ## はじめに
 
-科学的なプロセスは、徐々に進んでいくものです。プロジェクトの多くは、 計画性のないメモやいくつかのコードから始まります。そして、原案ができ、 最終的に、全てが少しづつ混ざり合ってまとまっていくのです。
+科学的なプロセスは本質的に段階的なものであり、多くのプロジェクトはランダムなメモ、一部のコード、次に原稿と進行し、最終的にはすべてが混ざり合ってしまうことがよくあります。
 
-<blockquote class="twitter-tweet"><p>Managing your projects in a reproducible fashion doesn't just make your science reproducible, it makes your life easier.</p>— Vince Buffalo (@vsbuffalo) <a href="https://twitter.com/vsbuffalo/status/323638476153167872">April 15, 2013</a></blockquote>
+<blockquote class="twitter-tweet"><p>プロジェクトを再現可能な方法で管理することは、科学を再現可能にするだけでなく、生活をより簡単にします。</p>— Vince Buffalo (@vsbuffalo) <a href="https://twitter.com/vsbuffalo/status/323638476153167872">2013年4月15日</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-大抵の人達は、次のようにプロジェクトを整理する傾向にあります：
+ほとんどの人はプロジェクトを次のように整理しがちです：
 
-![](fig/bad_layout.png){alt='Screenshot of file manager demonstrating bad project organisation'}
+![](fig/bad_layout.png){alt='悪いプロジェクト構成を示すファイルマネージャーのスクリーンショット'}
 
-このようなことを 絶対 避けるべき理由はいくつもあります：
+このような方法を_絶対に_避けるべき理由は数多くあります：
 
-1. It is really hard to tell which version of your data is
-   the original and which is the modified;
-2. It gets really messy because it mixes files with various
-   extensions together;
-3. It probably takes you a lot of time to actually find
-   things, and relate the correct figures to the exact code
-   that has been used to generate it;
+1. データのどのバージョンがオリジナルで、どれが修正済みなのかを区別するのが非常に難しい。
+2. 様々な拡張子のファイルが混在して、非常に散らかる。
+3. 必要なものを見つけたり、正確なコードで生成した正しい図表を関連付けたりするのに非常に時間がかかる。
 
-プロジェクトのレイアウトが良ければ、最終的に自分が楽になる
+良いプロジェクト構成は、最終的に生活をより簡単にします：
 
-- 自分のデータの整合性を保つ助けになる
-- It makes it simpler to share your code with someone else
-  (a lab-mate, collaborator, or supervisor);
-- It allows you to easily upload your code with your manuscript submission;
-- It makes it easier to pick the project back up after a break.
+- データの整合性を確保しやすくなる。
+- 他の人（研究室の同僚、共同研究者、指導教員）とコードを共有するのが簡単になる。
+- 原稿の投稿時にコードを簡単にアップロードできる。
+- しばらく休んだ後にプロジェクトを再開しやすくなる。
 
 ## 考えられる解決策
 
-幸いなことに、効果的な作業管理を助けるツールやパッケージがあります
+幸いなことに、作業を効果的に管理するためのツールやパッケージが存在します。
 
-RStudioの最も有能て使えるもののひとつとして、プロジェクト管理機能が挙げられます。 今日では、必要なものが揃い、再現可能なプロジェクトを作成するために、これが使われているのでしょう。
+RStudio の最も強力で便利な機能の一つがプロジェクト管理機能です。本日はこれを使って自己完結型の再現可能なプロジェクトを作成します。 今日では、必要なものが揃い、再現可能なプロジェクトを作成するために、これが使われているのでしょう。
 
 :::::::::::::::::::::::::::::::::::::::  challenge
 
-## チャレンジ：必要なものが揃ったプロジェクトを作成する
+## チャレンジ 1: 自己完結型プロジェクトの作成
 
-We're going to create a new project in RStudio:
+RStudio で新しいプロジェクトを作成します：
 
-1. Click the "File" menu button, then "New Project".
-2. Click "New Directory".
-3. Click "New Project".
-4. Type in the name of the directory to store your project, e.g. "my\_project".
-5. If available, select the checkbox for "Create a git repository."
-6. Click the "Create Project" button.
+1. 「File」メニューをクリックし、「New Project」を選択します。
+2. 「New Directory」をクリックします。
+3. 「New Project」をクリックします。
+4. プロジェクトを保存するディレクトリの名前（例：`my_project`）を入力します。
+5. 「Create a git repository」のチェックボックスが表示される場合は選択します。
+6. 「Create Project」ボタンをクリックします。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-The simplest way to open an RStudio project once it has been created is to click
-through your file system to get to the directory where it was saved and double
-click on the `.Rproj` file. This will open RStudio and start your R session in the
-same directory as the `.Rproj` file. All your data, plots and scripts will now be
-relative to the project directory. RStudio projects have the added benefit of
-allowing you to open multiple projects at the same time each open to its own
-project directory. This allows you to keep multiple projects open without them
+作成した RStudio プロジェクトを開く最も簡単な方法は、ファイルシステムをたどって保存したディレクトリに移動し、`.Rproj` ファイルをダブルクリックすることです。これにより RStudio が開き、R セッションが `.Rproj` ファイルと同じディレクトリで開始します。データ、プロット、スクリプトはすべてプロジェクトディレクトリに関連付けられます。さらに、RStudio プロジェクトは複数のプロジェクトを同時に開くことが可能で、それぞれのプロジェクトディレクトリに分離されます。これにより、複数のプロジェクトを開いても相互に干渉しません。 RStudio ウィンドウ上部のメニューで「Session」をクリックし、「Set Working Directory」を選択して「Choose Directory」をクリックします。その後、開いたウィンドウでプロジェクトディレクトリに戻り、「Open」をクリックします。コンソールに `setwd` コマンドが自動的に表示されます。 All your data, plots and scripts will now be
+relative to the project directory. 出力を管理する方法はたくさんあります。各分析ごとに異なるサブディレクトリを持つ出力フォルダを用意すると、後で便利です。多くの分析は探索的で最終プロジェクトに使用されないことが多く、一部の分析はプロジェクト間で共有されることもあります。 This allows you to keep multiple projects open without them
 interfering with each other.
 
 :::::::::::::::::::::::::::::::::::::::  challenge
 
-## Challenge 2: Opening an RStudio project through the file system
+## チャレンジ 2: ファイルシステムを使った RStudio プロジェクトの開き方
 
-1. Exit RStudio.
-2. Navigate to the directory where you created a project in Challenge 1.
-3. Double click on the `.Rproj` file in that directory.
+1. RStudio を終了します。
+2. チャレンジ 1 で作成したプロジェクトのディレクトリに移動します。
+3. そのディレクトリ内の `.Rproj` ファイルをダブルクリックします。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-## プロジェクト管理の最適なやり方
+## プロジェクト管理のベストプラクティス
 
-プロジェクトのレイアウトに「最適」な方法はありませんが、これを守れば、 プロジェクト管理が簡単になるだろうという一般的な原則がいくつかあります：
+プロジェクトを整理するための「ベスト」な方法はありませんが、管理を容易にするために従うべきいくつかの一般原則があります：
 
-### データは読み込み専用にしましょう
+### データを読み取り専用として扱う
 
 プロジェクトを始めるにあたって、これが多分一番重要なゴールかもしれません。 データ収集には、多くの時間と費用のいずれか、または両方が掛かることが多いものです。 データの修正も行える形で読込みも書込みもできる作業（例えば、エクセル）をすると、 データがどこからきたか、または収集されてからどう修正されてきたかが分からなくなります。
 ですから、データは「読み込むだけ」のものと扱うのがよいというわけです。
 
-### データクリーニング
+### データのクリーニング
 
 多くの場合、データは「汚れて」います： R（または、他のプログラミング言語）が使える形にするためには、かなりの前処理が必要となるでしょう。
 この作業は、「データ・マンジング」と呼ばれることもあります。 Storing these scripts in a
 separate folder, and creating a second "read-only" data folder to hold the
 "cleaned" data sets can prevent confusion between the two sets.
 
-### 生成されたアウトプットを捨てても良いようにしましょう
+### 生成された出力を使い捨てとみなす
 
-書いたものから生成されたものは、全て捨てても良いものにしましょう。 つまり、書いたものから生成できるようにしましょう。
+スクリプトによって生成されたものはすべて使い捨てとみなすべきです：スクリプトからすべてを再生成できる必要があります。
 
 There are lots of different ways to manage this output. Having an output folder
 with different sub-directories for each separate analysis makes it easier later.
@@ -116,72 +106,69 @@ project, and some of the analyses get shared between projects.
 
 :::::::::::::::::::::::::::::::::::::::::  callout
 
-## ヒント：科学的演算の良いと言えるやり方
+## ヒント: 科学的コンピューティングのための「十分に良い」実践
 
-[Good Enough Practices for Scientific Computing](https://github.com/swcarpentry/good-enough-practices-in-scientific-computing/blob/gh-pages/good-enough-practices-for-scientific-computing.pdf) gives the following recommendations for project organization:
+[科学的コンピューティングのための「十分に良い」実践](https://github.com/swcarpentry/good-enough-practices-in-scientific-computing/blob/gh-pages/good-enough-practices-for-scientific-computing.pdf) では、プロジェクトの構成について以下の推奨事項を挙げています：
 
-1. Put each project in its own directory, which is named after the project.
-2. Put text documents associated with the project in the `doc` directory.
-3. Put raw data and metadata in the `data` directory, and files generated during cleanup and analysis in a `results` directory.
-4. Put source for the project's scripts and programs in the `src` directory, and programs brought in from elsewhere or compiled locally in the `bin` directory.
-5. Name all files to reflect their content or function.
+1. 各プロジェクトを専用のディレクトリに配置し、そのディレクトリにプロジェクト名を付ける。
+2. プロジェクトに関連するテキスト文書を `doc` ディレクトリに配置する。
+3. 生データとメタデータを `data` ディレクトリに、クリーンアップや分析中に生成されたファイルを `results` ディレクトリに配置する。
+4. プロジェクトのスクリプトやプログラムのソースを `src` ディレクトリに配置し、他から持ち込んだプログラムやローカルでコンパイルしたプログラムを `bin` ディレクトリに配置する。
+5. すべてのファイルに内容や機能を反映した名前を付ける。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-### 関数定義と適用は別々にしましょう
+### 関数の定義と適用を分離する
 
-Rで作業するより効果的な方法のひとつは、まず走らせたいコードを直接.Rスクリプトに書き、それから選択した行をインタラクティブなRコンソールで（RStudioのショートカットキーを使うか、「Run」ボタンをクリックして）走らせることです。
+R を効率的に使用する最も効果的な方法の一つは、最初に .R スクリプトに実行したいコードを書き、RStudio のキーボードショートカットを使用するか「Run」ボタンをクリックして、選択した行をインタラクティブな R コンソールで実行することです。
 
-プロジェクトの初期段階では、最初の.Rスクリプトファイルには直接実行されるコードの行が多数あるものです。 プロジェクトが進むにつれて、何度も使える部分は、独自の関数としてまとめられます。 これらの関数を、色々なプロジェクトや分析で使える関数を保存するフォルダと、この分析のスクリプトを保存するフォルダの２つの異なるフォルダに分けるとよいでしょう。
+プロジェクトの初期段階では、最初の .R スクリプトファイルに多くの直接実行されるコード行が含まれることがよくあります。プロジェクトが進むにつれて、再利用可能なコードチャンクが独自の関数に分離されます。これらの関数を保存するためのフォルダと分析スクリプトを保存するためのフォルダを分けるのが良いアイデアです。 プロジェクトが進むにつれて、何度も使える部分は、独自の関数としてまとめられます。 これらの関数を、色々なプロジェクトや分析で使える関数を保存するフォルダと、この分析のスクリプトを保存するフォルダの２つの異なるフォルダに分けるとよいでしょう。
 
-### データディレクトリにデータを保存しましょう
+### データを data ディレクトリに保存する
 
 よいディレクトリ構造ができた後は、データファイルを `data/` ディレクトリに置く、または保管しましょう。
 
 :::::::::::::::::::::::::::::::::::::::  challenge
 
-## チャレンジ３
+## チャレンジ 3
 
-Download the gapminder data from [this link to a csv file](data/gapminder_data.csv).
+[このリンクから CSV ファイルをダウンロード](data/gapminder_data.csv)してください。
 
-1. Download the file (right mouse click on the link above -> "Save link as" / "Save file as", or click on the link and after the page loads, press <kbd>Ctrl</kbd>\+<kbd>S</kbd> or choose File -> "Save page as")
-2. Make sure it's saved under the name `gapminder_data.csv`
-3. Save the file in the `data/` folder within your project.
+1. ファイルをダウンロードします（上記リンクを右クリック -> 「リンク先を名前を付けて保存」/「名前を付けて保存」、またはリンクをクリックしページが読み込まれた後に <kbd>Ctrl</kbd>+<kbd>S</kbd> を押すか、メニューの「ファイル」 -> 「ページを名前を付けて保存」を選択）。
+2. `gapminder_data.csv` という名前で保存されていることを確認します。
+3. ファイルをプロジェクト内の `data/` フォルダに保存します。
 
-We will load and inspect these data later.
+後ほどこのデータを読み込み、確認します。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::  challenge
 
-## チャレンジ４
+## チャレンジ 4
 
-It is useful to get some general idea about the dataset, directly from the
-command line, before loading it into R. Understanding the dataset better
-will come in handy when making decisions on how to load it in R. Use the command-line
-shell to answer the following questions:
+R に読み込む前に、コマンドラインからデータセットについての一般的な情報を得ることは有益です。これにより、R に読み込む際の判断に役立ちます。コマンドラインシェルを使用して以下の質問に答えてください：
 
-1. ファイルのサイズは何ですか？
-2. データは何列入っていますか？
-3. ファイルには、どのような値が保存されていますか？
+1. ファイルのサイズはどれくらいですか？
+2. このファイルには何行のデータがありますか？
+3. このファイルにはどのような値が含まれていますか？
 
 :::::::::::::::  solution
 
-## チャレンジ３の解答
+## チャレンジ 4 の解答
 
-By running these commands in the shell:
+次のコマンドをシェルで実行します：
 
 ```{r ch2a-sol, engine="sh"}
 ls -lh data/gapminder_data.csv
 ```
 
-The file size is 80K.
+ファイルサイズは 80K です。
 
 ```{r ch2b-sol, engine="sh"}
 wc -l data/gapminder_data.csv
 ```
 
-There are 1705 lines. The data looks like:
+行数は 1705 行です。データの内容は次のようになります： The data looks like:
 
 ```{r ch2c-sol, engine="sh"}
 head data/gapminder_data.csv
@@ -193,53 +180,53 @@ head data/gapminder_data.csv
 
 :::::::::::::::::::::::::::::::::::::::::  callout
 
-## ヒント：R Studioのコマンドライン
+## ヒント: RStudio のコマンドライン
 
-The Terminal tab in the console pane provides a convenient place directly
-within RStudio to interact directly with the command line.
+RStudio のコンソールペインにある「Terminal」タブを使用すると、RStudio 内で直接コマンドラインを操作できます。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-### Working directory
+### 作業ディレクトリ
 
-Knowing R's current working directory is important because when you need to access other files (for example, to import a data file), R will look for them relative to the current working directory.
+R の現在の作業ディレクトリを知ることは重要です。なぜなら、他のファイルにアクセスする必要があるとき（例：データファイルをインポートする場合）、R は現在の作業ディレクトリを基準にそれらのファイルを探すからです。
 
-Each time you create a new RStudio Project, it will create a new directory for that project. When you open an existing `.Rproj` file, it will open that project and set R's working directory to the folder that file is in.
+リ構造ができたら、データファイルを `data/` ディレクトリに保存します。 新しい RStudio プロジェクトを作成するたびに、そのプロジェクトの新しいディレクトリが作成されます。既存の `.Rproj` ファイルを開くと、そのプロジェクトが開き、R の作業ディレクトリがそのファイルがあるフォルダに設定されます。
 
 :::::::::::::::::::::::::::::::::::::::  challenge
 
-## チャレンジ５
+## チャレンジ 5
 
-You can check the current working directory with the `getwd()` command, or by using the menus in RStudio.
+`getwd()` コマンドを使用するか、RStudio のメニューを使って現在の作業ディレクトリを確認します。
 
-1. In the console, type `getwd()` ("wd" is short for "working directory") and hit Enter.
-2. In the Files pane, double click on the `data` folder to open it (or navigate to any other folder you wish). To get the Files pane back to the current working directory, click "More" and then select "Go To Working Directory".
+1. コンソールで `getwd()`（"wd" は "working directory" の略）と入力し、Enter を押します。
+2. In the Files pane, double click on the `data` folder to open it (or navigate to any other folder you wish). ファイルペインで、`data` フォルダをダブルクリックして開く（または他の任意のフォルダに移動）。作業ディレクトリに戻るには、ファイルペインの「More」をクリックし、「Go To Working Directory」を選択します。
 
-You can change the working directory with `setwd()`, or by using RStudio menus.
+`setwd()` コマンドを使用するか、RStudio のメニューを使って作業ディレクトリを変更します。
 
-1. In the console, type `setwd("data")` and hit Enter. Type `getwd()` and hit Enter to see the new working directory.
-2. In the menus at the top of the RStudio window, click the "Session" menu button, and then select "Set Working Directory" and then "Choose Directory". Next, in the windows navigator that opens, navigate back to the project directory, and click "Open". Note that a `setwd` command will automatically appear in the console.
+1. In the console, type `setwd("data")` and hit Enter. コンソールで `setwd("data")` と入力し、Enter を押します。その後、`getwd()` と入力して Enter を押し、新しい作業ディレクトリを確認します。
+2. 良好なディレクト Next, in the windows navigator that opens, navigate back to the project directory, and click "Open". Note that a `setwd` command will automatically appear in the console.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::::  callout
 
-## Tip: File does not exist errors
+## ヒント: ファイルが存在しないエラー
 
-When you're attempting to reference a file in your R code and you're getting errors saying the file doesn't exist, it's a good idea to check your working directory.
-You need to either provide an absolute path to the file, or you need to make sure the file is saved in the working directory (or a subfolder of the working directory) and provide a relative path.
+R コードでファイルを参照しようとして「ファイルが存在しない」というエラーが出た場合は、作業ディレクトリを確認するのが良いです。
+ファイルへの絶対パスを指定するか、作業ディレクトリ内（またはそのサブフォルダ）にファイルを保存し、相対パスを指定する必要があります。
+多くの場合、データは「汚れて」おり、R（または他のプログラミング言語）で有用な形式にするために大幅な前処理が必要です。このタスクは「データマンジング」と呼ばれることもあります。これらのスクリプトを別のフォルダに保存し、クリーンなデータセットを保持する「読み取り専用」データフォルダを作成することで、両者の混同を防ぐことができます。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-### バージョン・コントロール
+### バージョン管理
 
-プロジェクトでは、バージョン・コントロールを使うことが重要です。  [RStudioでGitを使う良いレッスン](https://swcarpentry.github.io/git-novice/14-supplemental-rstudio.html/)を参照して下さい。
+プロジェクトでは、バージョン・コントロールを使うことが重要です。  プロジェクトではバージョン管理を使用することが重要です。[RStudio で Git を使用する方法についての良いレッスンはこちら](https://swcarpentry.github.io/git-novice/14-supplemental-rstudio.html)を参照してください。
 
 :::::::::::::::::::::::::::::::::::::::: keypoints
 
-- Use RStudio to create and manage projects with consistent layout.
-- データは読み込み専用にしましょう.
-- 生成されたアウトプットを捨てても良いようにしましょう.
-- 関数定義と適用は別々にしましょう.
+- RStudio を使用して一貫したレイアウトでプロジェクトを作成および管理する。
+- 生データを読み取り専用として扱う。
+- 生成された出力を使い捨てとみなす。
+- 関数の定義と適用を分離する。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
