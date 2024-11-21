@@ -66,9 +66,7 @@ help(function_name)
 
 ## ヒント: 実例を実行する
 
-ヘルプページ内の Examples セクションからコードをハイライトして <kbd>Ctrl</kbd>\+<kbd>Return</kbd> を押すと、RStudio コンソールで実行されます。
-関数の動作を素早く理解する方法です。 This gives you a quick way to get a feel for
-how a function works.
+ヘルプページ内の Examples セクションからコードをハイライトして <kbd>Ctrl</kbd>\+<kbd>Return</kbd> を押すと、RStudio コンソールで実行されます。 関数の動作を素早く理解する方法です。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
