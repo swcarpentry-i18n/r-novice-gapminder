@@ -305,7 +305,7 @@ double_coerced_to_logical
 ご覧のとおり、Rがある基本のデータ型を他へ変換すると、驚くことが起こります。 R が基本データ型を他の型に強制する際に驚くべきことが起こる場合があります！型の強制変換の細かい点はさておき、重要なのは：データが予想していた形式と異なる場合、それは型の強制変換が原因である可能性が高いです。ベクトルやデータフレームの列内のすべてのデータが同じ型であることを確認してください。さもなければ、予想外の問題が発生する可能性があります！
 
 But coercion can also be very useful! For example, in our `cats` data
-`likes_string` is numeric, but we know that the 1s and 0s actually represent
+`likes_catnip` is numeric, but we know that the 1s and 0s actually represent
 `TRUE` and `FALSE` (a common way of representing them). We should use the
 `logical` datatype here, which has two states: `TRUE` or `FALSE`, which is
 exactly what our data represents. We can 'coerce' this column to be `logical` by
