@@ -132,71 +132,42 @@ typeof('banana')
 
 あるユーザーが他の猫の詳細を加えたとします。 別の猫の詳細を追加した情報が、ファイル `data/feline-data_v2.csv` に保存されています。
 
-```{r, eval=FALSE}
-file.show("data/feline-data_v2.csv")
+```{r}
+additional_cat <- data.frame(coat = "tabby", weight = "2.3 or 2.4", likes_catnip = 1)
+additional_cat
+cats2 <- rbind(cats, additional_cat)
+cats2
 ```
 
-```{r, eval=FALSE}
-coat,weight,likes_catnip
-calico,2.1,1
-black,5.0,0
-tabby,3.2,1
-tabby,2.3 or 2.4,1
-```
-
-この新しい猫データを以前と同じ方法で読み込み、`weight` 列にどのようなデータ型が含まれているか確認します：
+Let's check what type of data we find in the
+`weight` column of our new `cats2` object:
 
 ```{r}
-cats <- read.csv(file="data/feline-data_v2.csv")
-typeof(cats
-
-$weight)
+typeof(cats2$weight)
 ```
 
 なんと、この weight はdouble型ではないじゃありませんか！ 前と同じように計算をしようとすると、 やっかいなことになります：
 
 ```{r}
-cats$weight + 2
+cats2$weight + 2
 ```
 
 何が起こったのでしょう？
-私たちが扱っている `cats` データは _データフレーム_ と呼ばれるものです。 データフレームは、R で最も一般的で多用途な _データ構造_ の 1 つです。
+The `cats` (and `cats2`) data we are working with is something called a _data frame_. データフレームは、R で最も一般的で多用途な _データ構造_ の 1 つです。
 データフレームのそれぞれの列には異なるデータ型を混在させることはできません。
-何が起こったのでしょうか？
-私たちが扱っている `cats` データは _データフレーム_ と呼ばれるものです。データフレームは、R で最も一般的で多用途な _データ構造_ の 1 つです。
-データフレームの特定の列には異なるデータ型を混在させることはできません。
-この場合、R はデータフレーム列 `weight` のすべてを _double_ として読み取らなかったため、列全体のデータ型がその列内のすべてに適した型に変わります。
+In this case, R cannot store everything in the data frame column `weight` as a _double_ anymore once we add the row for the additional cat (because its weight is `2.3 or 2.4`), therefore the entire
+column data type changes to something that is suitable for everything in the column.
 
 R が CSV ファイルを読み取ると、それは _データフレーム_ として読み込まれます。そのため、`cats` CSV ファイルを読み込むと、データフレームとして保存されます。データフレームは `str()` 関数によって表示される最初の行で認識できます： Thus, when we loaded the `cats`
 csv file, it is stored as a data frame. データフレームは `str()` 関数によって表示される最初の行で認識できます：
 
 ```{r}
-str(cats)
+str(cats2)
 ```
 
 _データフレーム_ は行と列で構成され、各列は同じ数の行を持ちます。 データフレームの異なる列は異なるデータ型で構成できます（これがデータフレームを非常に柔軟にする理由です）が、特定の列内ではすべてが同じ型である必要があります（例：ベクトル、因子、リストなど）。
 
-さまざまなデータ構造とそれらの振る舞いについて詳しく見てみましょう。
-猫のデータから余分な行を削除してから、もう一度読み込みしましょう：
-
-feline-data.csv:
-
-```
-coat,weight,likes_catnip
-calico,2.1,1
-black,5.0,0
-tabby,3.2,1
-```
-
-そして RStudio 内で：
-
-```{r, eval=FALSE}
-cats <- read.csv(file="data/feline-data.csv")
-```
-
-```{r, include=FALSE}
-cats <- cats_orig
-```
+さまざまなデータ構造とそれらの振る舞いについて詳しく見てみましょう。 For now, we will focus on our original data frame `cats` (and we can forget about `cats2` for the rest of this episode).
 
 ### ベクトルと型の強制変換
 
@@ -330,37 +301,37 @@ RStudio で新しいスクリプトを作成し、以下のコードをコピー
 move on to the tasks below, which help you to fill in the gaps (\_\_\_\_\_\_).
 
 ```
-# データを読み込み
-cats <- read.csv("data/feline-data_v2.csv")
+Using the object `cats2`:
 
-# 1. データを表示
+# 1. Print the data
 _____
 
-# 2. 表の概要をデータ型と共に表示
+# 2. Show an overview of the table with all data types
 _____(cats)
 
-# 3. "weight" 列の現在のデータ型 __________。
-#    正しいデータ型は： ____________。
+# 3. The "weight" column has the incorrect data type __________.
+#    The correct data type is: ____________.
 
-# 4. 4 番目の "weight" データポイントを指定された 2 つの値の平均に修正
-cats$weight[4] <- 2.35
-#    効果を確認するためにデータを再表示
+# 4. Correct the 4th weight data point with the mean of the two given values
+cats2$weight[4] <- 2.35
+#    print the data again to see the effect
 cats
 
-# 5. "weight" を正しいデータ型に変換
-cats$weight <- ______________(cats$weight)
+# 5. Convert the weight to the right data type
+cats2$weight <- ______________(cats2$weight)
 
-#    自分でテストするために平均を計算
-mean(cats$weight)
+#    Calculate the mean to test yourself
+mean(cats2$weight)
 
-# 正しい平均値（NA ではない）が表示されたら、演習は完了です！
+# If you see the correct mean value (and not NA), you did the exercise
+# correctly!
 ```
 
 ### タスクの手順
 
 #### 1\. しかし、強制変換は非常に便利な場合もあります！たとえば、`cats` データの `likes_catnip` 列は数値型ですが、実際には 1 と 0 がそれぞれ `TRUE` と `FALSE` を表しています。このデータには `logical` 型を使用すべきです。この型は `TRUE` または `FALSE` の 2 状態を持ち、データの意味に完全に一致します。この列を `logical` に「強制変換」するには、`as.logical` 関数を使用します：
 
-最初のステートメント（`read.csv(...)`）を実行します。その後、データをコンソールに表示します。 Then print the data to the
+Print the data to the
 console
 
 :::::::::::::::  solution
@@ -374,8 +345,8 @@ console
 2 つの正しい解答：
 
 ```
-cats
-print(cats)
+cats2
+print(cats2)
 ```
 
 :::::::::::::::::::::::::
@@ -384,7 +355,7 @@ print(cats)
 
 The data type of your data is as important as the data itself. Use a
 function we saw earlier to print out the data types of all columns of the
-`cats` table.
+`cats2` `data.frame`.
 
 :::::::::::::::  solution
 
@@ -400,14 +371,13 @@ here.
 > ### チャレンジ 1.2 の解答
 >
 > ```
-> str(cats)
+> str(cats2)
 > ```
 
 #### 3\. データ型はデータ自体と同じくらい重要です。以前見た関数を使用して、`cats` テーブルのすべての列のデータ型を表示します。
 
 表示されるデータ型は、このデータ（猫の体重）には適していません。必要なデータ型はどれですか？ なデータ型はどれですか？
 
-- なぜ `read.csv()` 関数は正しいデータ型を選ばなかったのでしょうか？
 - コメントのギャップに猫の体重に適したデータ型を埋めてください！
 
 :::::::::::::::  solution
@@ -479,8 +449,8 @@ auto-complete function: Type "`as.`" and then press the TAB key.
 > 歴史的な理由で、2 つの同義の関数があります：
 >
 > ```
-> cats$weight <- as.double(cats$weight)
-> cats$weight <- as.numeric(cats$weight)
+> cats2$weight <- as.double(cats2$weight)
+> cats2$weight <- as.numeric(cats2$weight)
 > ```
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
