@@ -86,9 +86,9 @@ output: html_document
 
 RStudioは、始めやすいように、例がいくつか入れられてある文書を作成します。 以下のような「チャンク（chunk）」がすでにあるかと思います：
 
-<pre>``{r}
+<pre>&#96;&#96;{r}
 summary(cars)
-```
+&#96;&#96;&#96;
 </pre>
 
 これらはRコードの「チャンク」（塊）で、knitrによってコードが実行され、結果に置き換えられます。 また後ほど、詳しくお伝えします。
@@ -216,9 +216,9 @@ figures will be inserted in the final document.
 
 メインのコードチャンクは、こんな感じです：
 
-<pre>``{r load_data}
+<pre>&#96;&#96;{r load_data}
 gapminder <- read.csv("gapminder.csv")
-```
+&#96;&#96;&#96;
 </pre>
 
 That is, you place a chunk of R code between <code>\`\`\`{r chunk\_name}</code>
@@ -238,19 +238,19 @@ Add code chunks to:
 
 ## チャレンジ３の解答
 
-<pre>``{r load-ggplot2}
+<pre>&#96;&#96;{r load-ggplot2}
 library("ggplot2")
-```
+&#96;&#96;&#96;
 </pre>
 
-<pre>``{r read-gapminder-data}
+<pre>&#96;&#96;{r read-gapminder-data}
 gapminder <- read.csv("gapminder.csv")
-```
+&#96;&#96;&#96;
 </pre>
 
-<pre>``{r make-plot}
+<pre>&#96;&#96;{r make-plot}
 plot(lifeExp ~ year, data = gapminder)
-```
+&#96;&#96;&#96;
 </pre>
 
 :::::::::::::::::::::::::
@@ -308,18 +308,18 @@ text((62+78)/2, 60, "pandoc", col="darkslateblue", cex=1.3)
 
 なので、書くとすれば：
 
-<pre>``{r load_libraries, echo=FALSE, message=FALSE}
+<pre>&#96;&#96;{r load_libraries, echo=FALSE, message=FALSE}
 library("dplyr")
 library("ggplot2")
-```
+&#96;&#96;&#96;
 </pre>
 
 使いたいオプションを別のチャンクでも使いたい場合は、 _global_options_ を使います。例えば：
 
-<pre>``{r global_options, echo=FALSE}
+<pre>&#96;&#96;{r global_options, echo=FALSE}
 knitr::opts_chunk$set(fig.path="Figs/", message=FALSE, warning=FALSE,
                       echo=FALSE, results="hide", fig.width=11)
-```
+&#96;&#96;&#96;
 </pre>
 
 `fig.path` オプションは、図のファイルがどこに保存されるかを定義します。 ここでの `/` はとても重要で、もしこれがなければ、図は標準的な場所に 保存されますが、 `Figs` で始まる名前のファイルだけになります。
@@ -336,9 +336,9 @@ knitr::opts_chunk$set(fig.path="Figs/", message=FALSE, warning=FALSE,
 
 ## チャレンジ３の解答
 
-<pre>``{r echo = FALSE, fig.width = 3}
+<pre>&#96;&#96;{r echo = FALSE, fig.width = 3}
 plot(faithful)
-```
+&#96;&#96;&#96;
 </pre>
 
 :::::::::::::::::::::::::
