@@ -44,16 +44,16 @@ built from the same set of components: a **data set**,
 - **Data sets** are the data that you, the user, provide.
 
 - **Mapping aesthetics** are what connect the data to the graphics.
-  They tell ggplot2 how to use your data to affect how the graph looks,
-  such as changing what is plotted on the X or Y axis, or the size or
-  color of different data points.
+ They tell ggplot2 how to use your data to affect how the graph looks,
+ such as changing what is plotted on the X or Y axis, or the size or
+ color of different data points.
 
 - **Layers** are the actual graphical output from ggplot2. Layers
-  determine what kinds of plot are shown (scatterplot, histogram, etc.),
-  the coordinate system used (rectangular, polar, others), and other
-  important aspects of the plot. The idea of layers of graphics may
-  be familiar to you if you have used image editing programs
-  like Photoshop, Illustrator, or Inkscape.
+ determine what kinds of plot are shown (scatterplot, histogram, etc.),
+ the coordinate system used (rectangular, polar, others), and other
+ important aspects of the plot. The idea of layers of graphics may
+ be familiar to you if you have used image editing programs
+ like Photoshop, Illustrator, or Inkscape.
 
 Let's start off building an example using the gapminder data from earlier.
 The most basic function is `ggplot`, which lets R know that we're
@@ -469,3 +469,5 @@ ggplot(data = gapminder, mapping = aes(x = continent, y = lifeExp, fill = contin
 - Think about graphics in layers: aesthetics, geometry, statistics, scale transformation, and grouping.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
