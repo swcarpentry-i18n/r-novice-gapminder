@@ -5,3 +5,6 @@ title: 議論１
 Please see [our other R lesson][r-gap] for a different presentation of these concepts.
 
 [r-gap]: https://swcarpentry.github.io/r-novice-gapminder/
+
+
+
