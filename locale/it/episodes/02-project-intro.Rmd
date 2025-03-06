@@ -36,12 +36,12 @@ Most people tend to organize their projects like this:
 There are many reasons why we should _ALWAYS_ avoid this:
 
 1. It is really hard to tell which version of your data is
-   the original and which is the modified;
+  the original and which is the modified;
 2. It gets really messy because it mixes files with various
-   extensions together;
+  extensions together;
 3. It probably takes you a lot of time to actually find
-   things, and relate the correct figures to the exact code
-   that has been used to generate it;
+  things, and relate the correct figures to the exact code
+  that has been used to generate it;
 
 A good project layout will ultimately make your life easier:
 
@@ -257,3 +257,5 @@ It is important to use version control with projects.  Go [here for a good lesso
 - Separate function definition and application.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
