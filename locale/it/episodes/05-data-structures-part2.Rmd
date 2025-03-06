@@ -393,3 +393,5 @@ The object `gapminder` is a data frame with columns
 - Understand what `length()` of a data frame represents.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
