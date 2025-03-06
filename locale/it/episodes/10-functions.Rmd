@@ -555,7 +555,7 @@ like this:
 2. Comment parts of the function to document its behaviour
 3. Load in the source file
 4. Experiment with it in the console to make sure it behaves
-   as you expect
+ as you expect
 5. Make any necessary bug fixes
 6. Rinse and repeat.
 
@@ -588,3 +588,5 @@ Formal automated tests can be written using the [testthat] package.
 - Load functions into programs using `source()`.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
