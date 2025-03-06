@@ -255,3 +255,5 @@ Hint: use `??"read table"` to look up functions related to reading in tabular da
 - R のオンラインヘルプを取得するには `help()` を使用します。
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
