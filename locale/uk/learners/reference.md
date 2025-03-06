@@ -340,3 +340,5 @@ or something else. In R the command typeof() is used to query a variables type.
 [while loop]{#while-loop}
 :   A loop that keeps executing as long as some condition is true.
 See also: [for loop](#for-loop).
+
+
