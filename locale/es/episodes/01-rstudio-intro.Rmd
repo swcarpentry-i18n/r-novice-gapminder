@@ -92,14 +92,14 @@ let you know what they are.
 There are two main ways one can work within RStudio:
 
 1. Test and play within the interactive R console then copy code into
-   a .R file to run later.
+  a .R file to run later.
 
 - This works well when doing small tests and initially starting off.
 - It quickly becomes laborious
 
 2. Start writing in a .R file and use RStudio's short cut keys for the Run command
-   to push the current line, selected lines or modified lines to the
-   interactive R console.
+  to push the current line, selected lines or modified lines to the
+  interactive R console.
 
 - This is a great way to start; all your code is saved for later
 - You will be able to run the file you create from within RStudio
@@ -116,13 +116,13 @@ current line, you can
 1. click on the `Run` button above the editor panel, or
 2. select "Run Lines" from the "Code" menu, or
 3. hit <kbd>Ctrl</kbd>\+<kbd>Return</kbd> in Windows or Linux
-   or <kbd>⌘</kbd>\+<kbd>Return</kbd> on OS X.
-   (This shortcut can also be seen by hovering
-   the mouse over the button). To run a block of code, select it and then `Run`.
-   If you have modified a line of code within a block of code you have just run,
-   there is no need to reselect the section and `Run`, you can use the next button
-   along, `Re-run the previous region`. This will run the previous code block
-   including the modifications you have made.
+  or <kbd>⌘</kbd>\+<kbd>Return</kbd> on OS X.
+  (This shortcut can also be seen by hovering
+  the mouse over the button). To run a block of code, select it and then `Run`.
+  If you have modified a line of code within a block of code you have just run,
+  there is no need to reselect the section and `Run`, you can use the next button
+  along, `Re-run the previous region`. This will run the previous code block
+  including the modifications you have made.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -720,3 +720,5 @@ install.packages("ggplot2", dependencies = TRUE)
 - Use `install.packages()` to install packages (libraries).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
