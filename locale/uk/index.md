@@ -2,10 +2,9 @@
 site: sandpaper::sandpaper_site
 ---
 
-_an introduction to R for non-programmers using gapminder data_
+_R для початківців_
 
-The goal of this lesson is to teach novice programmers to write modular code
-and best practices for using R for data analysis. R is commonly used in many
+Метою цього уроку є навчити початківців писати модульний код та використовувати найкращі практики для аналізу даних. R is commonly used in many
 scientific disciplines for statistical analysis and its array of third-party
 packages. We find that many scientists who come to Software Carpentry workshops
 use R and want to learn more. The emphasis of these materials is to give
