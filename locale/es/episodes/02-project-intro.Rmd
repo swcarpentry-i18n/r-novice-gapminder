@@ -1,0 +1,261 @@
+---
+title: Gestión de proyectos con RStudio
+teaching: 20
+exercises: 10
+source: Rmd
+---
+
+::::::::::::::::::::::::::::::::::::::: objectives
+
+- Crea proyectos autónomos en RStudio
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: questions
+
+- ¿Cómo puedo gestionar mis proyectos en R?
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+```{r, include=FALSE}
+```
+
+## Introducción
+
+El proceso científico es naturalmente gradual, y muchos proyectos
+comienzan como notas aleatorias, algún código, luego un manuscrito y
+, finalmente, todo está un poco mezclado.
+
+<blockquote class="twitter-tweet"><p>Gestionar sus proyectos de forma reproducible no solo hace que la ciencia sea reproducible, sino que también le facilita la vida.</p>— Vince Buffalo (@vsbuffalo) <a href="https://twitter.com/vsbuffalo/status/323638476153167872">15 de abril de 2013</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+La mayoría de las personas tienden a organizar sus proyectos de la siguiente manera:
+
+! [] (fig/bad_layout.png) {alt='Captura de pantalla del administrador de archivos que demuestra una mala organización del proyecto'}
+
+Hay muchas razones por las que debemos_SIEMPRE_ evitar esto:
+
+1. Es muy difícil saber qué versión de sus datos es
+  la original y cuál es la modificada;
+2. Se vuelve muy complicado porque mezcla archivos con varias extensiones
+  ;
+3. Probablemente te lleve mucho tiempo encontrar las cosas de
+  y relacionar las cifras correctas con el código
+  exacto que se ha utilizado para generarlas;
+
+En última instancia, un buen diseño del proyecto hará que tu vida sea más fácil:
+
+- Ayudará a garantizar la integridad de sus datos;
+- Hace que sea más sencillo compartir tu código con otra persona
+  (un compañero de laboratorio, un colaborador o un supervisor);
+- Le permite cargar fácilmente su código con el envío de su manuscrito;
+- Hace que sea más fácil retomar el proyecto después de un descanso.
+
+## Una posible solución
+
+Afortunadamente, existen herramientas y paquetes que pueden ayudarlo a administrar su trabajo de manera efectiva.
+
+Uno de los aspectos más poderosos y útiles de RStudio es su funcionalidad
+de gestión de proyectos. Usaremos esto hoy para crear un proyecto
+autónomo y reproducible.
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## Desafío 1: Crear un proyecto autónomo
+
+Vamos a crear un nuevo proyecto en RStudio:
+
+1. Haga clic en el botón de menú «Archivo» y, a continuación, en «Nuevo proyecto».
+2. Haga clic en «Nuevo directorio».
+3. Haz clic en «Nuevo proyecto».
+4. Escriba el nombre del directorio para almacenar su proyecto, por ejemplo, «my\ _project».
+5. Si está disponible, selecciona la casilla «Crear un repositorio de git».
+6. Haz clic en el botón «Crear proyecto».
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+La forma más sencilla de abrir un proyecto de RStudio una vez creado es hacer clic en
+en su sistema de archivos para ir al directorio donde se guardó y hacer doble clic en
+en el archivo `.Rproj`. Esto abrirá RStudio e iniciará tu sesión de R en el mismo directorio
+que el archivo `.Rproj`. Todos sus datos, gráficos y guiones pasarán a ser
+en relación con el directorio del proyecto. Los proyectos de RStudio tienen la ventaja adicional de que
+te permite abrir varios proyectos al mismo tiempo, cada uno abierto en su propio directorio de proyectos
+. Esto te permite mantener varios proyectos abiertos sin que
+interfieran entre sí.
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## Desafío 2: Abrir un proyecto de RStudio a través del sistema de archivos
+
+1. Salga de RStudio.
+2. Navega hasta el directorio en el que creaste un proyecto en el Desafío 1.
+3. Haga doble clic en el archivo `.Rproj` de ese directorio.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## Mejores prácticas para la organización de proyectos
+
+Si bien no existe la «mejor» manera de diseñar un proyecto, hay algunos principios generales
+que debes cumplir y que facilitarán la gestión del proyecto:
+
+### Tratar los datos como de solo lectura
+
+Este es probablemente el objetivo más importante de la creación de un proyecto. Los datos
+suelen llevar mucho tiempo y/o ser costosos de recopilar. Trabajar con ellos
+de forma interactiva (por ejemplo, en Excel), donde se pueden modificar, significa que nunca se está
+seguro de dónde provienen los datos ni de cómo se han modificado desde su recopilación.
+Por lo tanto, es una buena idea tratar sus datos como de «solo lectura».
+
+### Limpieza de datos
+
+En muchos casos, sus datos estarán «sucios»: necesitará un preprocesamiento significativo
+para obtener un formato que R (o cualquier otro lenguaje de programación) encuentre útil.
+Esta tarea a veces se denomina «recolección de datos». Almacenar estos scripts en una carpeta separada
+y crear una segunda carpeta de datos de «solo lectura» para almacenar los conjuntos de datos «limpiados» de
+puede evitar confusiones entre los dos conjuntos.
+
+### Tratar la salida generada como desechable
+
+Todo lo que generen sus guiones debe tratarse como desechable:
+debería poder regenerarse a partir de sus guiones.
+
+Hay muchas maneras diferentes de administrar este resultado. Tener una carpeta de salida
+con diferentes subdirectorios para cada análisis por separado facilita las cosas más adelante.
+Dado que muchos análisis son exploratorios y no terminan utilizándose en el proyecto final de
+, algunos de los análisis se comparten entre proyectos.
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Consejo: Prácticas suficientemente buenas para la computación científica
+
+[Good Enough Practices for Scientific Computing] (https://github.com/swcarpentry/good-enough-practices-in-scientific-computing/blob/gh-pages/good-enough-practices-for-scientific-computing.pdf) ofrece las siguientes recomendaciones para la organización de proyectos:
+
+1. Coloque cada proyecto en su propio directorio, que lleva el nombre del proyecto.
+2. Coloque los documentos de texto asociados al proyecto en el directorio `doc`.
+3. Coloque los datos sin procesar y los metadatos en el directorio de «datos» y los archivos generados durante la limpieza y el análisis en un directorio de «resultados».
+4. Coloque el código fuente de los scripts y programas del proyecto en el directorio `src`, y los programas traídos de otro lugar o compilados localmente en el directorio `bin`.
+5. Asigne un nombre a todos los archivos para reflejar su contenido o función.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+### Definición y aplicación de funciones separadas
+
+Una de las formas más eficaces de trabajar con R es empezar por escribir el código que quieres ejecutar directamente en un script de .R y, a continuación, ejecutar las líneas seleccionadas (ya sea mediante los métodos abreviados de teclado de RStudio o haciendo clic en el botón «Ejecutar») en la consola R interactiva.
+
+Cuando el proyecto se encuentra en sus primeras etapas, el archivo de script .R inicial suele contener muchas líneas
+de código ejecutado directamente. A medida que madura, las partes reutilizables pasan a sus propias funciones
+. Es una buena idea separar estas funciones en dos carpetas independientes: una
+para almacenar funciones útiles que podrá reutilizar en análisis y proyectos, y otra
+para almacenar los scripts de análisis.
+
+### Guarde los datos en el directorio de datos
+
+Ahora que tenemos una buena estructura de directorios, colocaremos o guardaremos el archivo de datos en el directorio `data/`.
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## Desafío 3
+
+Descargue los datos de gapminder desde [este enlace a un archivo csv] (data/gapminder_data.csv).
+
+1. Descargue el archivo (haga clic con el botón derecho del ratón en el enlace de arriba -> «Guardar enlace como»/«Guardar archivo como», o haga clic en el enlace y, una vez que se cargue la página, pulse <kbd>Ctrl</kbd>\ +<kbd>S</kbd> o elija Archivo -> «Guardar página como»)
+2. Asegúrate de guardarlo con el nombre `gapminder_data.csv`
+3. Guarda el archivo en la carpeta `data/` de tu proyecto.
+
+Cargaremos e inspeccionaremos estos datos más adelante.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## Desafío 4
+
+Es útil hacerse una idea general del conjunto de datos, directamente desde la línea de comandos
+, antes de cargarlo en R. Comprender mejor el conjunto de datos
+será útil a la hora de tomar decisiones sobre cómo cargarlo en R. Utilice el shell
+de la línea de comandos para responder a las siguientes preguntas:
+
+1. ¿Cuál es el tamaño del archivo?
+2. ¿Cuántas filas de datos contiene?
+3. ¿Qué tipos de valores se almacenan en este archivo?
+
+:::::::::::::::  solution
+
+## Solución al desafío 4
+
+Al ejecutar estos comandos en el shell:
+
+```{r ch2a-sol, engine="sh"}
+ls -lh data/gapminder_data.csv
+```
+
+El tamaño del archivo es de 80 KB.
+
+```{r ch2b-sol, engine="sh"}
+wc -l data/gapminder_data.csv
+```
+
+Hay 1705 líneas. Los datos tienen el siguiente aspecto:
+
+```{r ch2c-sol, engine="sh"}
+head data/gapminder_data.csv
+```
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Consejo: línea de comandos en RStudio
+
+La pestaña Terminal del panel de la consola ofrece un práctico lugar directamente
+dentro de RStudio para interactuar directamente con la línea de comandos.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+### Directorio de trabajo
+
+Es importante conocer el directorio de trabajo actual de R porque cuando necesite acceder a otros archivos (por ejemplo, para importar un archivo de datos), R los buscará en relación con el directorio de trabajo actual.
+
+Cada vez que cree un nuevo proyecto de RStudio, se creará un nuevo directorio para ese proyecto. Cuando abras un archivo `.Rproj` existente, se abrirá ese proyecto y establecerá el directorio de trabajo de R en la carpeta en la que se encuentra ese archivo.
+
+:::::::::::::::::::::::::::::::::::::::  challenge
+
+## Desafío 5
+
+Puede comprobar el directorio de trabajo actual con el comando `getwd () `o utilizando los menús de RStudio.
+
+1. En la consola, escribe `getwd () `(«wd» es la abreviatura de «directorio de trabajo») y pulsa Entrar.
+2. En el panel Archivos, haga doble clic en la carpeta `datos` para abrirla (o navegue a cualquier otra carpeta que desee). Para que el panel Archivos vuelva al directorio de trabajo actual, haga clic en «Más» y, a continuación, seleccione «Ir al directorio de trabajo».
+
+Puede cambiar el directorio de trabajo con `setwd () `o usando los menús de RStudio.
+
+1. En la consola, escribe `setwd («data») `y pulsa Entrar. Escriba `getwd () `y pulse Entrar para ver el nuevo directorio de trabajo.
+2. En los menús de la parte superior de la ventana de RStudio, haga clic en el botón de menú «Sesión» y, a continuación, seleccione «Establecer directorio de trabajo» y, a continuación, «Elegir directorio». A continuación, en el navegador de Windows que se abre, vuelva al directorio del proyecto y haga clic en «Abrir». Tenga en cuenta que el comando `setwd` aparecerá automáticamente en la consola.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::  callout
+
+## Sugerencia: El archivo no existe errores
+
+Cuando intentas hacer referencia a un archivo en tu código R y recibes errores que indican que el archivo no existe, es una buena idea comprobar tu directorio de trabajo.
+Debe proporcionar una ruta absoluta al archivo o asegurarse de que el archivo está guardado en el directorio de trabajo (o en una subcarpeta del directorio de trabajo) y proporcionar una ruta relativa.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+### Control de versiones
+
+Es importante usar el control de versiones con los proyectos.  Ve [aquí para ver una buena lección que describe el uso de Git con RStudio] (https://swcarpentry.github.io/git-novice/14-supplemental-rstudio.html).
+
+:::::::::::::::::::::::::::::::::::::::: keypoints
+
+- Use RStudio para crear y administrar proyectos con un diseño uniforme.
+- Trate los datos sin procesar como de solo lectura.
+- Trate la salida generada como desechable.
+- Definición y aplicación de funciones separadas.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
